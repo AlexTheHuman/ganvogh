@@ -2,10 +2,13 @@ from PIL import Image, ImageDraw, ImageOps
 import util
 import random
 import math
-
+import sys
+import os
 # Painting Parameters
-file_name = 'swof.png'
-descriptor = file_name.split(".")[0]
+file_name = sys.argv[1]
+descriptor = os.path.basename(file_name).split(".")[0]
+folder = os.path.join('output', descriptor)
+os.mkdir(folder)
 make_colors = True
 halftone_size = 12
 gray_scale = False
@@ -44,7 +47,7 @@ clustered = util.stretch_contrast(clustered)
 clustered = clustered.transpose(Image.FLIP_TOP_BOTTOM)
 pix = clustered.load()
 COLORS = util.get_colors(clustered)
-util.draw_palette(COLORS).save("%s-colors.png" % descriptor)
+util.draw_palette(COLORS).save(os.path.join(folder, "%s-colors.png" % descriptor))
 canvas = Image.new('RGB', canvas_size, (255,255,255))
 draw = ImageDraw.Draw(canvas)
 
@@ -76,7 +79,7 @@ for color in COLORS:
                 motions[color].append(xy)
 canvas = canvas.transpose(Image.FLIP_TOP_BOTTOM)
 canvas.show()
-canvas.save("%s-painted.png" % descriptor)
+canvas.save(os.path.join(folder, "%s-painted.png" % descriptor))
 
 p_width = float(PAPER[1][0] - PAPER[0][0])
 p_height = float(PAPER[1][1] - PAPER[0][1])
@@ -128,5 +131,5 @@ o += util.clean_brush(WATERS, WELL_CLEAR_HEIGHT, WELL_RADIUS, DIP_HEIGHT)
 o += "G0 Z%s;\n" % (WELL_CLEAR_HEIGHT + 20)
 o += "G0 Y%s; Go to Paper/Pallete install location\n" % (200)
 
-with open("%s.gcode" % descriptor, "w+") as f:
+with open(os.path.join(folder, "%s.gcode" % descriptor), "w+") as f:
     f.write(o)
