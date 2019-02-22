@@ -1,2 +1,3 @@
-# ganvogh
-A robotic painter
+# GANvogh - A robotic painter
+
+
