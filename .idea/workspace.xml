@@ -2,20 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2d66f306-3aa5-4be4-b2a0-7ad1c920886f" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/gcode.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/output/frog/frog-reference.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/output/legend/legend-reference.png" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/ganvogh.iml" afterPath="$PROJECT_DIR$/.idea/ganvogh.iml" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/cell_paint.py" afterPath="$PROJECT_DIR$/cell_paint.py" />
-      <change beforePath="$PROJECT_DIR$/ganvogh.py" afterPath="$PROJECT_DIR$/ganvogh.py" />
-      <change beforePath="$PROJECT_DIR$/output/face/face.gcode" afterPath="$PROJECT_DIR$/output/face/face.gcode" />
-      <change beforePath="$PROJECT_DIR$/output/frog/frog-colors.png" afterPath="$PROJECT_DIR$/output/frog/frog-colors.png" />
-      <change beforePath="$PROJECT_DIR$/output/frog/frog.gcode" afterPath="$PROJECT_DIR$/output/frog/frog.gcode" />
-      <change beforePath="$PROJECT_DIR$/output/legend/legend.gcode" afterPath="$PROJECT_DIR$/output/legend/legend.gcode" />
-      <change beforePath="$PROJECT_DIR$/util.py" afterPath="$PROJECT_DIR$/util.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -26,18 +14,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="face.png" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/input/face.png">
-          <provider selected="true" editor-type-id="images">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="cell_paint.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="cell_paint.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/cell_paint.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="14" column="21" lean-forward="false" selection-start-line="14" selection-start-column="21" selection-end-line="14" selection-end-column="21" />
+            <state relative-caret-position="-1309">
+              <caret line="13" column="23" lean-forward="false" selection-start-line="13" selection-start-column="23" selection-end-line="13" selection-end-column="23" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
               </folding>
@@ -45,11 +26,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="gcode.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="gcode.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/gcode.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+            <state relative-caret-position="-195">
+              <caret line="28" column="12" lean-forward="true" selection-start-line="28" selection-start-column="12" selection-end-line="28" selection-end-column="12" />
               <folding />
             </state>
           </provider>
@@ -170,6 +151,14 @@
       <option name="presentableId" value="Default" />
       <updated>1551117458323</updated>
     </task>
+    <task id="LOCAL-00001" summary="Brushstroke Path optimization">
+      <created>1551117531170</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1551117531170</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -196,6 +185,10 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Brushstroke Path optimization" />
+    <option name="LAST_COMMIT_MESSAGE" value="Brushstroke Path optimization" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -255,11 +248,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/input/face.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/util.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2601">
@@ -270,21 +258,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cell_paint.py">
+    <entry file="file://$PROJECT_DIR$/gcode.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" column="21" lean-forward="false" selection-start-line="14" selection-start-column="21" selection-end-line="14" selection-end-column="21" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="-195">
+          <caret line="28" column="12" lean-forward="true" selection-start-line="28" selection-start-column="12" selection-end-line="28" selection-end-column="12" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/gcode.py">
+    <entry file="file://$PROJECT_DIR$/input/face.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cell_paint.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="-1309">
+          <caret line="13" column="23" lean-forward="false" selection-start-line="13" selection-start-column="23" selection-end-line="13" selection-end-column="23" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

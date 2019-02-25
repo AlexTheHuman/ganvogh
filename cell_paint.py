@@ -11,8 +11,8 @@ import util
 make_colors = False
 halftone_size = 12
 gray_scale = False
-black_and_white = True
-number_of_colors = 10
+black_and_white = False
+number_of_colors = 4
 number_of_strokes = 120
 TRAVEL_HEIGHT = 30
 WELL_CLEAR_HEIGHT = 35
@@ -55,6 +55,7 @@ img = img.transpose(Image.FLIP_TOP_BOTTOM)
 width, height = img.size
 pix = img.load()
 COLORS = util.get_colors(img)
+COLORS = [x for x in COLORS if x != "ffffffff" and x != "ff000000"]
 util.draw_palette(COLORS).save(os.path.join(folder, "%s-colors.png" % descriptor))
 img.save(os.path.join(folder, "%s-reference.png" % descriptor))
 
@@ -149,54 +150,57 @@ wn.delay(0)
 
 alex.up()
 alex.pensize(3)
-o = ""
-o += gc.header(WELLS, WELL_CLEAR_HEIGHT, PAINT_HEIGHT)
-white = True
-for c_index, color in enumerate(COLORS):
-    alex.color(util.c_to_string(color, reverse=True))
-    o += gc.clean_brush(WATERS, WELL_CLEAR_HEIGHT, WELL_RADIUS, DIP_HEIGHT)
-    count = 0
-    if black_and_white and not white:
-        o += gc.well_dip(1, WELLS, WELL_CLEAR_HEIGHT, DIP_HEIGHT, WELL_RADIUS, wipe=False)
-        o += gc.stir(0, WELLS, WELL_CLEAR_HEIGHT, DIP_HEIGHT, WELL_RADIUS)
+
+
+for min_island_size in [1000,100,0]:
+    o = ""
+    o += gc.header(WELLS, WELL_CLEAR_HEIGHT, PAINT_HEIGHT)
+    white = True
+    for c_index, color in enumerate(COLORS):
+        alex.color(util.c_to_string(color, reverse=True))
         o += gc.clean_brush(WATERS, WELL_CLEAR_HEIGHT, WELL_RADIUS, DIP_HEIGHT)
-        c_index = 0
-    white = False
-    while len(motions[color]) > 0:
-        #if len(motions[color][0]) <= 10:
-        #    break
-        i = motions[color].pop(0)
-        first = True
-        for location in i:
-            x, y = location
-            if x < max_x:
-                max_x = x
-            if y < max_y:
-                max_y = y
-            if count % 40 == 0:
-                lifts += 1
-                if current_run > longest_run:
-                    longest_run = current_run
-                current_run = 0
-                o += gc.well_dip(c_index, WELLS, WELL_CLEAR_HEIGHT, DIP_HEIGHT, WELL_RADIUS)
-                first = True
-            G = util.b_s((x,y), 45, 2)
-            for A, B in G:
-                o += "G0 X%s Y%s;\n" % (float(A) * x_ratio + PAPER[0][0], float(B) * y_ratio + PAPER[0][1])
-                alex.goto(float(A)*3.0-200, float(B)*3.0-200)
-            if first:
-                alex.down()
-                o += "G0 Z%s;\n" % (PAINT_HEIGHT - 1)
-                first = False
-            count += 1
-            all_count += 1
-            current_run += 1
-        alex.up()
-        lifts += 1
-        o += "G0 Z%s; Go to travel height on Z axis\n" % TRAVEL_HEIGHT
-        if current_run > longest_run:
-            longest_run = current_run
-        current_run = 0
+        count = 0
+        if black_and_white and not white:
+            o += gc.well_dip(1, WELLS, WELL_CLEAR_HEIGHT, DIP_HEIGHT, WELL_RADIUS, wipe=False)
+            o += gc.stir(0, WELLS, WELL_CLEAR_HEIGHT, DIP_HEIGHT, WELL_RADIUS)
+            o += gc.clean_brush(WATERS, WELL_CLEAR_HEIGHT, WELL_RADIUS, DIP_HEIGHT)
+            c_index = 0
+        white = False
+        while len(motions[color]) > 0:
+            if len(motions[color][0]) <= min_island_size:
+                break
+            i = motions[color].pop(0)
+            first = True
+            for location in i:
+                x, y = location
+                if x < max_x:
+                    max_x = x
+                if y < max_y:
+                    max_y = y
+                if count % 40 == 0:
+                    lifts += 1
+                    if current_run > longest_run:
+                        longest_run = current_run
+                    current_run = 0
+                    o += gc.well_dip(c_index, WELLS, WELL_CLEAR_HEIGHT, DIP_HEIGHT, WELL_RADIUS)
+                    first = True
+                G = util.b_s((x,y), 45, 2)
+                for A, B in G:
+                    o += "G0 X%s Y%s;\n" % (float(A) * x_ratio + PAPER[0][0], float(B) * y_ratio + PAPER[0][1])
+                    alex.goto(float(A)*3.0-200, float(B)*3.0-200)
+                if first:
+                    alex.down()
+                    o += "G0 Z%s;\n" % (PAINT_HEIGHT - 1)
+                    first = False
+                count += 1
+                all_count += 1
+                current_run += 1
+            alex.up()
+            lifts += 1
+            o += "G0 Z%s; Go to travel height on Z axis\n" % TRAVEL_HEIGHT
+            if current_run > longest_run:
+                longest_run = current_run
+            current_run = 0
 
 o += gc.clean_brush(WATERS, WELL_CLEAR_HEIGHT, WELL_RADIUS, DIP_HEIGHT)
 o += "G0 Z%s;\n" % (WELL_CLEAR_HEIGHT + 20)
