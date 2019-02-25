@@ -10,8 +10,8 @@ from skimage.measure import compare_mse as mse
 
 
 def stretch_contrast(img):
-
-    return ImageOps.autocontrast(img)
+    a = ImageOps.equalize(img)
+    return ImageOps.autocontrast(a)
 
 
 def gcr(im, percentage):
@@ -479,3 +479,80 @@ def doesnt_exist(w, m):
         if w[0] == item[0] and w[1] == item[1]:
             return False
     return True
+
+def r_colors(original, number_of_colors, number_of_strokes):
+    # Reduce colors via k-means clustering
+    img = cluster(original, number_of_colors, number_of_strokes)
+    img = stretch_contrast(img).convert('RGBA')
+    img = img.transpose(Image.FLIP_TOP_BOTTOM)
+    return img
+
+def show_composite(i1, i2):
+    a = i1.copy()
+    b = i2.copy()
+    a.putalpha(1)
+    b.putalpha(1)
+    alphaComposited = Image.alpha_composite(a, b)
+    alphaComposited.show()
+
+def get_islands(img, COLORS):
+    height, width = img.size
+    islands = {}
+    for c in COLORS:
+        print("Doing color %s" % c)
+        restart = True
+        i2 = img.copy()
+        pix = i2.load()
+        while restart:
+            restart = False
+            for x in range(width):
+                for y in range(height):
+                    if c_to_string(pix[x,y]) == c:
+                        if c not in islands.keys():
+                            islands[c] = []
+                        points = island((x, y), pix, width, height, c)
+                        islands[c].append(points)
+                        restart = True
+                        break
+                if restart:
+                    break
+        if c in islands.keys():
+            islands[c].sort(key=len, reverse=True)
+    return islands
+
+
+def get_motions(islands, img, COLORS):
+    width, height = img.size
+    pix = img.copy().load()
+    motions = {}
+    for c in COLORS:
+        motions[c] = []
+        print("Doing color %s" % c)
+        if c in islands.keys():
+            for count, i in enumerate(islands[c]):
+                print("Processing island %s:%s %s" % (c, count, len(i)))
+                last_point = (0, 0)
+                i.sort(key=dist_x_y)
+                i.sort(key=lambda w: get_point_distance(w, last_point))
+                last_point = i.pop(0)
+                motions[c].append([last_point])
+                while len(i) > 0:
+                    i.sort(key=lambda w: get_point_distance(w, last_point))
+                    w = i.pop(0)
+                    if doesnt_exist(w, motions[c][-1]):
+                        motions[c][-1] += shortest_path(last_point, w, pix, width, height)
+                        last_point = w
+    n_motions = {}
+    for c in COLORS:
+        n_motions[c] = []
+        for i in motions[c]:
+            lastX = None
+            lastY = None
+            r = []
+            for location in i:
+                if location[0] != lastX or location[1] != lastY:
+                    r.append(location)
+                    lastX = location[0]
+                    lastY = location[1]
+            n_motions[c].append(r)
+    return n_motions
