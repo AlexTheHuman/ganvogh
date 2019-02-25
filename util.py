@@ -9,9 +9,8 @@ from skimage import img_as_float
 from skimage.measure import compare_mse as mse
 
 
-
-
 def stretch_contrast(img):
+
     return ImageOps.autocontrast(img)
 
 
@@ -33,6 +32,7 @@ def gcr(im, percentage):
                 cmyk[i][x,y] = cmyk[i][x,y] - gray
             cmyk[3][x,y] = gray
     return Image.merge('CMYK', cmyk_im)
+
 
 def halftone(im, cmyk, sample, scale):
     '''Returns list of half-tone images for cmyk image. sample (pixels),
@@ -66,6 +66,7 @@ def halftone(im, cmyk, sample, scale):
         angle += 15
     return dots
 
+
 def rmsdiff(im1, im2):
     "Calculate the root-mean-square difference between two images"
     diff = ImageChops.difference(im1, im2)
@@ -76,26 +77,21 @@ def rmsdiff(im1, im2):
     rms = sum_of_squares/float(im1.size[0] * im1.size[1])
     return rms
 
-#def rmsdiff(im1, im2):
-#    """Calculates the root mean square error (RSME) between two images"""
-#    errors = np.asarray(ImageChops.difference(im1, im2)) / 255
-#    return math.sqrt(np.mean(np.square(errors)))
-
-#def rmsdiff(im1, im2):
-#    """Calculates the root mean square error (RSME) between two images"""
-#    return math.sqrt(mse(img_as_float(im1), img_as_float(im2)))
 
 def get_color_position(c):
     return (50,50)# (random.randint(45,55),random.randint(45,55)+(c*10))
 
+
 def get_black_position(c):
     return (50,90)# (random.randint(45,55),random.randint(45,55)+(c*10))
 
+
 def c_to_string(c, reverse=False):
     if reverse:
-        return int(c[:2], 16) + int(c[2:4], 16) + int(c[4:], 16)
+        return "#" + c[6:8] + c[4:6] + c[2:4]
     else:
         return hex(c[3])[2:].rjust(2,'0') + hex(c[2])[2:].rjust(2,'0') + hex(c[1])[2:].rjust(2,'0') + hex(c[0])[2:].rjust(2,'0')
+
 
 def mse(a, b):
     A = np.array(a)
@@ -109,6 +105,7 @@ def mse(a, b):
     # return the MSE, the lower the error, the more "similar"
     # the two images are
     return err
+
 
 def image_resize(image, width = None, height = None, inter = cv2.INTER_AREA):
     # initialize the dimensions of the image to be resized and
@@ -141,8 +138,10 @@ def image_resize(image, width = None, height = None, inter = cv2.INTER_AREA):
     # return the resized image
     return resized
 
+
 def fitness(item):
     return int(item[:2], 16) + int(item[2:4], 16) + int(item[4:], 16)
+
 
 def color_compare(item1, item2):
     if fitness(item1) < fitness(item2):
@@ -152,6 +151,13 @@ def color_compare(item1, item2):
     else:
         return 0
 
+def b_s(where, angle, length):
+    angle = np.deg2rad(angle)
+    opposite = np.sin(angle) * (float(length) / 2.0)
+    adjacent = np.cos(angle) * (float(length) / 2.0)
+    xy = [(int(where[0] + adjacent), int(where[1] + opposite)), (int(where[0] - adjacent), int(where[1] - opposite))]
+    return xy
+
 def brushstroke(d, where, angle, color, length, width):
     angle = np.deg2rad(angle)
     opposite = np.sin(angle) * (float(length)/2.0)
@@ -159,6 +165,7 @@ def brushstroke(d, where, angle, color, length, width):
     xy = [(int(where[0] + adjacent), int(where[1] + opposite)), (int(where[0] - adjacent), int(where[1] - opposite))]
     d.line(xy, fill=int(color, 16), width=int(width))
     return xy
+
 
 def dot(img, where, color, dia):
     x, y = where
@@ -173,6 +180,7 @@ def dot(img, where, color, dia):
     del d
     return np.array(i)
 
+
 def draw_circle(x, y, color, draw, dia):
     rad = dia/2
     a = x - rad
@@ -180,6 +188,7 @@ def draw_circle(x, y, color, draw, dia):
     c = x + rad
     d = y + rad
     draw.ellipse((a, b, c, d), color)
+
 
 def get_closest_old(point, stroke_list, max_skip):
     #random.shuffle(stroke_list)
@@ -203,6 +212,7 @@ def get_closest_old(point, stroke_list, max_skip):
         return stroke_list.pop(i)
     else:
         return stroke_list.pop(i)[::-1]
+
 
 def get_closest(point, stroke_list, max_skip):
     best_distance = None
@@ -253,16 +263,17 @@ def get_closest(point, stroke_list, max_skip):
 def get_point_distance(a, b):
     x1, y1 = a
     x2, y2 = b
-    return abs(math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2))
+    A = abs(math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2))
+    x2, y2 = (0, 0)
+    B = abs(math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2))
+    return (A * 1000.0) + B
+
 
 def get_next(point, stroke_list, max_skip):
     candidates = []
     for index, s in enumerate(stroke_list):
         if get_point_distance(point, s[0]) <= max_skip or get_point_distance(point, s[1]) <= max_skip:
             candidates.append(index)
-
-
-
 
 
 def get_closest_dot(point, stroke_list):
@@ -277,89 +288,6 @@ def get_closest_dot(point, stroke_list):
     return stroke_list.pop(i)
 
 
-def clean_brush(WATERS, WELL_CLEAR_HEIGHT, WELL_RADIUS, DIP_HEIGHT):
-    o = ""
-    
-    for w_w in range(6):
-        o += "G0 Z%s; Go to well clear height on Z axis\n" % WELL_CLEAR_HEIGHT
-        o += "G0 X%s Y%s; Go to paint\n" % (WATERS[w_w][0],WATERS[w_w][1])
-        o += "G0 Z%s; Go to dip height on Z axis\n" % (DIP_HEIGHT-3)
-        o += "G91;\n"
-        for c_c in range(3):
-            o += "G0 X-%s;\n" % WELL_RADIUS
-            o += "G0 X%s;\n" % WELL_RADIUS
-            o += "G0 Y-%s;\n" % WELL_RADIUS
-            o += "G0 Y%s;\n" % WELL_RADIUS
-            o += "G0 X%s;\n" % WELL_RADIUS
-
-            o += "G0 X-%s;\n" % WELL_RADIUS
-            o += "G0 Y%s;\n" % WELL_RADIUS
-            o += "G0 Y-%s;\n" % WELL_RADIUS
-        o += "G90;\n"
-        o += "G0 Z%s; Go to dip height on Z axis\n" % (DIP_HEIGHT+1)
-        o += "G91;\n"
-        o += "G0 Y16;\n"
-        o += "G90;\n"
-        #o += "G0 Z%s; Go to clear height on Z axis\n" % (WELL_CLEAR_HEIGHT)
-    o += "G0 X%s Y%s; Go to paint\n" % (WATERS[6][0],WATERS[6][1])
-    o += "G0 Z%s; Go to dip height on Z axis\n" % (DIP_HEIGHT)
-    o += "G91;\n"
-    o += "G0 Y16;\n"
-    o += "G90;\n"
-    return o
-
-
-def header(WELLS, WELL_CLEAR_HEIGHT, PAINT_HEIGHT):
-    o = ""
-    o += "; Created by GANvogh\n"
-    o += "G21;\n"
-    o += "G28 X Y ; home X and Y axes\n"
-    o += "G28 Z ; home Z axis\n"
-    o += "G0 F12000; set speed\n"
-    o += "G90 ; use absolute positioning\n"
-    o += "G0 Z%s; Go to WELL_CLEAR_HEIGHT on Z axis\n" % (WELL_CLEAR_HEIGHT)
-    o += "G0 X%s Y%s; Go to well #0\n" % (WELLS[0][0], WELLS[0][1])
-    o += "G0 Z%s;\n" % (PAINT_HEIGHT)
-    o += "M117 Install Brush;\n"
-    o += "M25; (PAUSE install brush)\n"
-    o += "G0 Z%s;\n" % (WELL_CLEAR_HEIGHT)
-    o += "M117 Install Wells;\n"
-    o += "M25; (PAUSE install palette)\n"
-    return o
-
-def make_dot(where, PAINT_HEIGHT, TRAVEL_HEIGHT, retract=True):
-    o = ""
-    o += "G0 X%s Y%s;\n" % (where[0],where[1])
-    o += "G0 Z%s;\n" % (PAINT_HEIGHT)
-    o += "G0 Z%s; Go to travel height on Z axis\n" % TRAVEL_HEIGHT
-    return o
-
-def well_dip(c_index, WELLS, WELL_CLEAR_HEIGHT, DIP_HEIGHT, well_radius, wipe=True, less=0):
-    o = ""
-    o += "G0 Z%s; Go to well clear height on Z axis\n" % WELL_CLEAR_HEIGHT
-    o += "G0 X%s Y%s; Go to paint\n" % (WELLS[c_index][0],WELLS[c_index][1])
-    o += "G0 Z%s; Go to dip height on Z axis\n" % (DIP_HEIGHT + less)
-    o += "G91;\n"
-    o += "G0 X-%s;\n" % well_radius
-    o += "G0 X%s;\n" % well_radius
-    o += "G0 Y-%s;\n" % well_radius
-    o += "G0 Y%s;\n" % well_radius
-    o += "G0 X%s;\n" % well_radius
-    o += "G0 X-%s;\n" % well_radius
-    o += "G0 Y%s;\n" % well_radius
-    o += "G0 Y-%s;\n" % well_radius
-    if wipe:
-        o += "G0 X8;\n"
-    o += "G90;\n"
-    o += "G0 Z%s; Go to clear height on Z axis\n" % (WELL_CLEAR_HEIGHT)
-    return o
-
-def stir(c_index, WELLS, WELL_CLEAR_HEIGHT, DIP_HEIGHT, well_radius):
-    o = ""
-    for count in range(20):
-        o += well_dip(c_index, WELLS, WELL_CLEAR_HEIGHT, DIP_HEIGHT, well_radius)
-    return o
-
 def cluster(img, number_of_colors, size):
     np_array = image_resize(np.array(img), width=size)
     old_size = np_array.shape
@@ -369,6 +297,7 @@ def cluster(img, number_of_colors, size):
     centers = kmeans.cluster_centers_
     posterized = centers[labels].reshape(old_size).astype('uint8')
     return Image.fromarray(posterized, 'RGB')
+
 
 def get_colors(img):
     pix = img.load()
@@ -394,6 +323,7 @@ def draw_palette(COLORS):
     #img2.save('palette.png')
     return img2
 
+
 def image_diff(i1, i2):
     assert i1.mode == i2.mode, "Different kinds of images."
     assert i1.size == i2.size, "Different sizes."
@@ -407,6 +337,7 @@ def image_diff(i1, i2):
 
     ncomponents = i1.size[0] * i1.size[1] * 3
     return (dif / 255.0 * 100) / ncomponents
+
 
 def find_angle(original, canvas, color, where, brush_stroke_length, brush_stroke_width, min_angle=0, max_angle=180, step=12):
     x, y  = where
@@ -429,3 +360,122 @@ def find_angle(original, canvas, color, where, brush_stroke_length, brush_stroke
             lowest_error = error
             best_angle = a
     return best_angle
+
+
+# def get_area(where, pix, c):
+#     r = []
+#     x, y = where
+#     pix[x, y] = (pix[x, y][0], pix[x, y][1], pix[x, y][2], 0)
+#     ways = [(-1, 0), (0, -1), (0, 1), (1, 0), (1, 1), (-1, 1), (-1, -1), (1, -1)]
+#     sides = []
+#     for xd, yd in ways:
+#         sides.append(c_to_string(pix[x + xd, y + yd]))
+#     if sides[0] == c:
+#         x -= 1
+#         r.append(get_area((x-1,y), pix))
+#     if sides[1] == c:
+#         y -= 1
+#         r.append(get_area((x - 1, y), pix))
+#     if sides[2] == c:
+#         y += 1
+#         r.append(get_area((x - 1, y), pix))
+#     if sides[3] == c:
+#         x += 1
+#         r.append(get_area((x - 1, y), pix))
+#     if sides[4] == c:
+#         x += 1
+#         y += 1
+#         r.append(get_area((x - 1, y), pix))
+#     if sides[5] == c:
+#         x -= 1
+#         y += 1
+#         r.append(get_area((x - 1, y), pix))
+#     if sides[6] == c:
+#         x -= 1
+#         y -= 1
+#         r.append(get_area((x - 1, y), pix))
+#     if sides[7] == c:
+#         x -= 1
+#         y += 1
+#         r.append(get_area((x - 1, y), pix))
+#     return
+
+
+def seen(where, pix):
+    x, y = where
+    pix[x, y] = (pix[x, y][0],pix[x, y][2],pix[x, y][3],0)
+
+
+def island(where, pix, width, height, c):
+    seen(where, pix)
+    result = [where]
+    while True:
+        again = False
+        for w in result:
+            x, y = w
+            ways = [(-1, 0), (0, -1), (0, 1), (1, 0), (1, 1), (-1, 1), (-1, -1), (1, -1)]
+            sides = []
+            for xd, yd in ways:
+                sides.append((x + xd, y + yd))
+            for index, s in enumerate(sides):
+                if 0 <= s[0] < width and 0 <= s[1] < height:
+                    if c_to_string(pix[s[0], s[1]]) == c:
+                        result.insert(0, s)
+                        seen(s, pix)
+                        again = True
+                        break
+        if not again:
+            break
+    return result
+
+
+def shortest_path(f, t, pix, width, height):
+    if get_point_distance(f, t) <= 1:
+        return [t]
+    to_check = [f]
+    seen = []
+    working = np.zeros((height, width))
+    working = working - 1
+    working[f[0],f[1]] = 0
+    c = c_to_string(pix[f[0], f[1]])
+    ways = [(-1, 0), (0, -1), (0, 1), (1, 0), (1, 1), (-1, 1), (-1, -1), (1, -1)]
+    while len(to_check) > 0:
+        to_check.sort(key=lambda q: get_point_distance(q, t))
+        x, y = to_check.pop(0)
+        seen.append((x,y))
+        if abs(x-t[0]) == 0 and abs(y-t[1]) == 0:
+            break
+        for xd, yd in ways:
+            if 0 <= x+xd < width and 0 <= y+yd < height:
+                if c_to_string(pix[x+xd,y+yd]) == c and (working[x+xd,y+yd] == -1 or working[x+xd,y+yd] > working[x,y] + 1):
+                    working[x + xd, y + yd] = working[x,y] + 1
+                    to_check.append((x + xd, y + yd))
+    x, y = t
+    current = working[x,y]
+    result = [t]
+    while current != -1:
+        all_the_way = True
+        for way in ways:
+            xd, yd = way
+            if 0 <= x+xd < width and 0 <= y+yd < height:
+                if working[x+xd,y+yd] == current - 1:
+                    x, y = x+xd, y+yd
+                    result.append((x,y))
+                    current = current - 1
+                    all_the_way = False
+                    break
+        if all_the_way:
+            #print(working[x-5:x+5,y-5:y+5])
+            #print("Couldn't get there!")
+            #quit()
+            break
+    return result[::-1]
+
+def dist_x_y(a):
+    return (a[0] * 1000) + a[1]
+
+def doesnt_exist(w, m):
+    for item in m:
+        if w[0] == item[0] and w[1] == item[1]:
+            return False
+    return True

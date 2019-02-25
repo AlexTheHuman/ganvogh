@@ -4,10 +4,7 @@ import random
 import math
 import sys
 import os
-
-
-
-
+import gcode as gc
 
 # Painting Parameters
 file_name = sys.argv[1]
@@ -98,19 +95,19 @@ y_ratio_b = p_height/float(c_height)
 max_x = 0
 
 o = ""
-o += util.header(WELLS, WELL_CLEAR_HEIGHT, PAINT_HEIGHT)
+o += gc.header(WELLS, WELL_CLEAR_HEIGHT, PAINT_HEIGHT)
 lifts = 0
 longest_run = 0
 current_run = 0
 all_count = 0
 for c_index, color in enumerate(COLORS):
     count = 0
-    o += util.clean_brush(WATERS, WELL_CLEAR_HEIGHT, WELL_RADIUS, DIP_HEIGHT)
+    o += gc.clean_brush(WATERS, WELL_CLEAR_HEIGHT, WELL_RADIUS, DIP_HEIGHT)
     lastX = 0
     lastY = 0
     while len(motions[color]) > 0:
         if count % 40 == 0:
-            o += util.well_dip(c_index, WELLS, WELL_CLEAR_HEIGHT, DIP_HEIGHT, WELL_RADIUS)
+            o += gc.well_dip(c_index, WELLS, WELL_CLEAR_HEIGHT, DIP_HEIGHT, WELL_RADIUS)
             lifts += 1
             if current_run > longest_run:
                 longest_run = current_run
@@ -146,7 +143,7 @@ for c_index, color in enumerate(COLORS):
 print (max_x*x_ratio_b+ PAPER[0][0])
 print (all_count, lifts, longest_run)
 
-o += util.clean_brush(WATERS, WELL_CLEAR_HEIGHT, WELL_RADIUS, DIP_HEIGHT)
+o += gc.clean_brush(WATERS, WELL_CLEAR_HEIGHT, WELL_RADIUS, DIP_HEIGHT)
 o += "G0 Z%s;\n" % (WELL_CLEAR_HEIGHT + 20)
 o += "G0 Y%s; Go to Paper/Pallete install location\n" % (200)
 
