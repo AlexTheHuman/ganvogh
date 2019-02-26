@@ -3,4 +3,4 @@
 
 **Requires:** Python 3, PIL, Numpy, Scikit-image, Open-CV
 
-**To run:** python3 ganvogh.py <filename>
+**To run:** python3 ganvogh.py &lt;filename&gt;
