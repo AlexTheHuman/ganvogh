@@ -14,8 +14,8 @@ if not os.path.isdir(folder):
     os.mkdir(folder)
 make_colors = False
 halftone_size = 12
-gray_scale = False
-number_of_colors = 10
+gray_scale = True
+number_of_colors = 8
 number_of_strokes = 120
 canvas_size = (800,800)
 TRAVEL_HEIGHT = 30
@@ -45,9 +45,9 @@ if gray_scale:
     original = original.convert('LA').convert('RGB')
     original = ImageOps.equalize(original)
 
-clustered = util.cluster(original, number_of_colors, number_of_strokes)
-clustered = util.stretch_contrast(clustered)
-clustered = clustered.transpose(Image.FLIP_TOP_BOTTOM)
+#clustered = util.cluster(original, number_of_colors, number_of_strokes)
+#clustered = util.stretch_contrast(clustered)
+clustered = util.r_colors(original, number_of_colors, number_of_strokes)
 pix = clustered.load()
 COLORS = util.get_colors(clustered)
 util.draw_palette(COLORS).save(os.path.join(folder, "%s-colors.png" % descriptor))
@@ -66,14 +66,22 @@ c_width, c_height = canvas_size
 x_ratio = c_width/float(width)
 y_ratio = c_height/float(height)
 
+points = util.get_points_in_order(clustered)
+
+
+
 motions = {}
 ref_angle = 70  # float(random.randint(0,360))
 ref_move = 22  # float(random.randint(3,5))
+count = 0
 for color in COLORS:
     motions[color] = []
     print ("Doing color:", color)
-    for x in range(number_of_strokes):
-        for y in range(number_of_strokes):
+#    for x in range(number_of_strokes):
+#        for y in range(number_of_strokes):
+    for i in points[color]:
+        for x,y in i:
+            count += 1
             c = util.c_to_string(pix[x, y])
             if c == color:
                 #best_angle = random.randint(0, 360)
@@ -83,6 +91,7 @@ for color in COLORS:
                 #print best_angle
                 xy = util.brushstroke(draw, (x*x_ratio, y*y_ratio), best_angle, color, brush_stroke_length, brush_stroke_width)
                 motions[color].append(xy)
+
 canvas = canvas.transpose(Image.FLIP_TOP_BOTTOM)
 canvas.show()
 canvas.save(os.path.join(folder, "%s-painted.png" % descriptor))
@@ -112,7 +121,7 @@ for c_index, color in enumerate(COLORS):
             if current_run > longest_run:
                 longest_run = current_run
             current_run = 0
-        a, b = util.get_closest((lastX, lastY), motions[color], brush_stroke_length+1)
+        a, b = motions[color].pop(0) #util.get_closest((lastX, lastY), motions[color], brush_stroke_length+1)
         x1, y1 = a
         x2, y2 = b
         if y1 > max_x:
@@ -121,7 +130,7 @@ for c_index, color in enumerate(COLORS):
             max_x = y2
 
         dist = abs(  math.sqrt(  ((float(x1)) - (float(lastX)))**2 + ((float(y1)) - (float(lastY)))**2   )     )
-        if dist > brush_stroke_length+1 and not count % 40 == 0:
+        if dist > brush_stroke_length*3 and not count % 40 == 0:
             lifts += 1
             o += "G0 Z%s; Go to travel height on Z axis\n" % TRAVEL_HEIGHT
             if current_run > longest_run:

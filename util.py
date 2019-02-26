@@ -14,7 +14,7 @@ def stretch_contrast(img):
     return ImageOps.autocontrast(a)
 
 
-def gcr(im, percentage):
+def gcr(im, percentage, separate=False):
     '''basic "Gray Component Replacement" function. Returns a CMYK image with
        percentage gray component removed from the CMY channels and put in the
        K channel, ie. for percentage=100, (41, 100, 255, 0) >> (0, 59, 214, 41)'''
@@ -27,10 +27,13 @@ def gcr(im, percentage):
         cmyk.append(cmyk_im[i].load())
     for x in range(im.size[0]):
         for y in range(im.size[1]):
-            gray = min(cmyk[0][x,y], cmyk[1][x,y], cmyk[2][x,y]) * percentage / 100
+            gray = int(min(cmyk[0][x,y], cmyk[1][x,y], cmyk[2][x,y]) * percentage / 100)
             for i in range(3):
-                cmyk[i][x,y] = cmyk[i][x,y] - gray
-            cmyk[3][x,y] = gray
+                Q = cmyk[i][x,y] - gray
+                cmyk[i][x, y] = Q
+            cmyk[3][x, y] = gray
+    if separate:
+        return  cmyk_im
     return Image.merge('CMYK', cmyk_im)
 
 
@@ -483,7 +486,7 @@ def doesnt_exist(w, m):
 def r_colors(original, number_of_colors, number_of_strokes):
     # Reduce colors via k-means clustering
     img = cluster(original, number_of_colors, number_of_strokes)
-    img = stretch_contrast(img).convert('RGBA')
+    img = img.convert('RGBA')
     img = img.transpose(Image.FLIP_TOP_BOTTOM)
     return img
 
@@ -540,7 +543,10 @@ def get_motions(islands, img, COLORS):
                     i.sort(key=lambda w: get_point_distance(w, last_point))
                     w = i.pop(0)
                     if doesnt_exist(w, motions[c][-1]):
-                        motions[c][-1] += shortest_path(last_point, w, pix, width, height)
+                        if get_point_distance(last_point, w) <= 5:
+                            motions[c][-1] += shortest_path(last_point, w, pix, width, height)
+                        else:
+                            motions[c][-1] += [w]
                         last_point = w
     n_motions = {}
     for c in COLORS:
@@ -555,4 +561,18 @@ def get_motions(islands, img, COLORS):
                     lastX = location[0]
                     lastY = location[1]
             n_motions[c].append(r)
+    return n_motions
+
+def get_points_in_order(img):
+    COLORS = get_colors(img)
+    color_islands = get_islands(img, COLORS)
+    color_motions = get_motions(color_islands, img, COLORS)
+    return color_motions
+
+
+def remove_dupes(motions):
+    n_motions = []
+    for i in motions:
+        if doesnt_exist(i, n_motions):
+            n_motions.append(i)
     return n_motions

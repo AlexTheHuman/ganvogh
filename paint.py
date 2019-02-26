@@ -1,13 +1,14 @@
 from PIL import Image
 import gcode as gc
 import turtle
+import time
 import util
 import sys
 import os
 
-number_of_colors = 4
+number_of_colors = 6
 shades_of_gray = 6
-number_of_strokes = 150
+number_of_strokes = 120
 TRAVEL_HEIGHT = 30
 WELL_CLEAR_HEIGHT = 35
 PAINT_HEIGHT = 25
@@ -19,7 +20,9 @@ WATERS = [(59.0-15.875, 52.0+(float(x)*15.875)) for x in range(13)]
 
 # Open file, get descriptor, which is the first part of the filename, and create the output folder if it doesn't exist.
 file_name = sys.argv[1]
-original = Image.open(file_name).convert('RGB').resize((800,800), Image.BICUBIC)
+original = Image.open(file_name).convert('RGB').resize((800, 800), Image.BICUBIC)
+test = util.gcr(original,  100, separate=True)
+#test[1].show()
 descriptor = os.path.basename(file_name).split(".")[0]
 folder = os.path.join('output', descriptor)
 if not os.path.isdir(folder):
@@ -40,7 +43,7 @@ ALL = GRAYS + COLORS
 print(ALL)
 
 #Output reference pngs
-util.draw_palette(COLORS).save(os.path.join(folder, "%s-colors.png" % descriptor))
+util.draw_palette(ALL).save(os.path.join(folder, "%s-colors.png" % descriptor))
 gray.save(os.path.join(folder, "%s-bw.png" % descriptor))
 colored.save(os.path.join(folder, "%s-c.png" % descriptor))
 
@@ -70,7 +73,9 @@ current_run = 0
 all_count = 0
 wn = turtle.Screen()
 alex = turtle.Turtle()
+alex.speed(0)
 wn.delay(0)
+wn.tracer(8, 0)
 alex.up()
 alex.pensize(3)
 
@@ -96,7 +101,7 @@ for c_index, color in enumerate(ALL):
                 current_run = 0
                 o += gc.well_dip(c_index, WELLS, WELL_CLEAR_HEIGHT, DIP_HEIGHT, WELL_RADIUS)
                 first = True
-            G = util.b_s((x,y), 45, 2)
+            G = util.b_s((x,y), 45, 5)
             for A, B in G:
                 o += "G0 X%s Y%s;\n" % (float(A) * x_ratio + PAPER[0][0], float(B) * y_ratio + PAPER[0][1])
                 alex.goto(float(A)*3.0-200, float(B)*3.0-200)
@@ -117,6 +122,9 @@ for c_index, color in enumerate(ALL):
 o += gc.clean_brush(WATERS, WELL_CLEAR_HEIGHT, WELL_RADIUS, DIP_HEIGHT)
 o += "G0 Z%s;\n" % (WELL_CLEAR_HEIGHT + 20)
 o += "G0 Y%s; Go to Paper/Pallete install location\n" % (200)
+
+#wn = turtle.Screen()
+time.sleep(10)
 
 with open(os.path.join(folder, "%s.gcode" % descriptor), "w+") as f:
     f.write(o)
