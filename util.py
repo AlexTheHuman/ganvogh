@@ -543,10 +543,7 @@ def get_motions(islands, img, COLORS):
                     i.sort(key=lambda w: get_point_distance(w, last_point))
                     w = i.pop(0)
                     if doesnt_exist(w, motions[c][-1]):
-                        if get_point_distance(last_point, w) <= 5:
-                            motions[c][-1] += shortest_path(last_point, w, pix, width, height)
-                        else:
-                            motions[c][-1] += [w]
+                        motions[c][-1] += shortest_path(last_point, w, pix, width, height)
                         last_point = w
     n_motions = {}
     for c in COLORS:

@@ -1,4 +1,5 @@
 from PIL import Image, ImageDraw, ImageOps
+import turtle
 import util
 import random
 import math
@@ -7,15 +8,19 @@ import os
 import gcode as gc
 
 # Painting Parameters
-file_name = sys.argv[1]
+if len(sys.argv) > 1:
+    file_name = sys.argv[1]
+else:
+    file_name = "input/face.png"
+
 descriptor = os.path.basename(file_name).split(".")[0]
 folder = os.path.join('output', descriptor)
 if not os.path.isdir(folder):
     os.mkdir(folder)
 make_colors = False
 halftone_size = 12
-gray_scale = True
-number_of_colors = 8
+gray_scale = False
+number_of_colors = 10
 number_of_strokes = 120
 canvas_size = (800,800)
 TRAVEL_HEIGHT = 30
@@ -45,8 +50,6 @@ if gray_scale:
     original = original.convert('LA').convert('RGB')
     original = ImageOps.equalize(original)
 
-#clustered = util.cluster(original, number_of_colors, number_of_strokes)
-#clustered = util.stretch_contrast(clustered)
 clustered = util.r_colors(original, number_of_colors, number_of_strokes)
 pix = clustered.load()
 COLORS = util.get_colors(clustered)
@@ -80,17 +83,21 @@ for color in COLORS:
 #    for x in range(number_of_strokes):
 #        for y in range(number_of_strokes):
     for i in points[color]:
+        motions[color].append([])
+        seen = []
+        #if len(i) < 10:
+        #    break
         for x,y in i:
             count += 1
             c = util.c_to_string(pix[x, y])
             if c == color:
-                #best_angle = random.randint(0, 360)
-                #ref_angle = int(70 - (x * x_ratio / 10 * ref_move))
-                #best_angle = (math.sin(float(x)/float(number_of_strokes))+math.sin(float(y)/float(number_of_strokes))) * 180.0
-                best_angle = util.find_angle(original, canvas, color, (x*x_ratio, y*y_ratio), brush_stroke_length, brush_stroke_width, min_angle=ref_angle-ref_move, max_angle=ref_angle+ref_move, step=5)
-                #print best_angle
-                xy = util.brushstroke(draw, (x*x_ratio, y*y_ratio), best_angle, color, brush_stroke_length, brush_stroke_width)
-                motions[color].append(xy)
+                if util.doesnt_exist((x,y), seen):
+                    best_angle = util.find_angle(original, canvas, color, (x*x_ratio, y*y_ratio), brush_stroke_length, brush_stroke_width, min_angle=ref_angle-ref_move, max_angle=ref_angle+ref_move, step=5)
+                    xy = util.brushstroke(draw, (x*x_ratio, y*y_ratio), best_angle, color, brush_stroke_length, brush_stroke_width)
+                else:
+                    xy = ((x*x_ratio,y*y_ratio), (x*x_ratio,y*y_ratio))
+                motions[color][-1].append(xy)
+                seen.append((x,y))
 
 canvas = canvas.transpose(Image.FLIP_TOP_BOTTOM)
 canvas.show()
@@ -102,7 +109,11 @@ x_ratio_b = p_width/float(c_width)
 y_ratio_b = p_height/float(c_height)
 
 max_x = 0
-
+wn = turtle.Screen()        # creates a graphics window
+wn.tracer(2,0)
+alex = turtle.Turtle()      # create a turtle named alex
+alex.pensize(3)
+alex.penup()
 o = ""
 o += gc.header(WELLS, WELL_CLEAR_HEIGHT, PAINT_HEIGHT)
 lifts = 0
@@ -110,40 +121,60 @@ longest_run = 0
 current_run = 0
 all_count = 0
 for c_index, color in enumerate(COLORS):
+    alex.color(util.c_to_string(color, reverse=True))
     count = 0
     o += gc.clean_brush(WATERS, WELL_CLEAR_HEIGHT, WELL_RADIUS, DIP_HEIGHT)
     lastX = 0
     lastY = 0
     while len(motions[color]) > 0:
-        if count % 40 == 0:
-            o += gc.well_dip(c_index, WELLS, WELL_CLEAR_HEIGHT, DIP_HEIGHT, WELL_RADIUS)
-            lifts += 1
-            if current_run > longest_run:
-                longest_run = current_run
-            current_run = 0
-        a, b = motions[color].pop(0) #util.get_closest((lastX, lastY), motions[color], brush_stroke_length+1)
-        x1, y1 = a
-        x2, y2 = b
-        if y1 > max_x:
-            max_x = y1
-        if y2 > max_x:
-            max_x = y2
+        lifts += 1
+        o += "G0 Z%s; Go to travel height on Z axis\n" % TRAVEL_HEIGHT
+        alex.penup()
+        if current_run > longest_run:
+            longest_run = current_run
+        current_run = 0
+        for a, b in motions[color].pop(0):
+            if count % 40 == 0:
+                o += gc.well_dip(c_index, WELLS, WELL_CLEAR_HEIGHT, DIP_HEIGHT, WELL_RADIUS)
+                alex.penup()
+                lifts += 1
+                if current_run > longest_run:
+                    longest_run = current_run
+                current_run = 0
+            #a, b = motions[color].pop(0) #util.get_closest((lastX, lastY), motions[color], brush_stroke_length+1)
+            x1, y1 = a
+            x2, y2 = b
+            if y1 > max_x:
+                max_x = y1
+            if y2 > max_x:
+                max_x = y2
 
-        dist = abs(  math.sqrt(  ((float(x1)) - (float(lastX)))**2 + ((float(y1)) - (float(lastY)))**2   )     )
-        if dist > brush_stroke_length*3 and not count % 40 == 0:
-            lifts += 1
-            o += "G0 Z%s; Go to travel height on Z axis\n" % TRAVEL_HEIGHT
-            if current_run > longest_run:
-                longest_run = current_run
-            current_run = 0
-        current_run += 1
-        o += "G0 X%s Y%s;\n" % (x1*x_ratio_b+ PAPER[0][0],y1*y_ratio_b+ PAPER[0][1])
-        o += "G0 Z%s;\n" % (PAINT_HEIGHT-1)
-        o += "G0 X%s Y%s;\n" % (x2*x_ratio_b+ PAPER[0][0],y2*y_ratio_b+ PAPER[0][1])
-        count += 1
-        all_count += 1
-        lastX = x2
-        lastY = y2
+            # dist = abs(  math.sqrt(  ((float(x1)) - (float(lastX)))**2 + ((float(y1)) - (float(lastY)))**2   )     )
+            # if dist > brush_stroke_length*2 and not count % 40 == 0:
+            #     lifts += 1
+            #     o += "G0 Z%s; Go to travel height on Z axis\n" % TRAVEL_HEIGHT
+            #     alex.penup()
+            #     if current_run > longest_run:
+            #         longest_run = current_run
+            #     current_run = 0
+            current_run += 1
+            o += "G0 X%s Y%s;\n" % (x1*x_ratio_b+ PAPER[0][0],y1*y_ratio_b+ PAPER[0][1])
+            o += "G0 Z%s;\n" % (PAINT_HEIGHT-1)
+            o += "G0 X%s Y%s;\n" % (x2*x_ratio_b+ PAPER[0][0],y2*y_ratio_b+ PAPER[0][1])
+            alex.goto(x1-400,y1-400)
+            alex.pendown()
+            alex.goto(x2-400,y2-400)
+            count += 1
+            all_count += 1
+            lastX = x2
+            lastY = y2
+        lifts += 1
+        o += "G0 Z%s; Go to travel height on Z axis\n" % TRAVEL_HEIGHT
+        alex.penup()
+        if current_run > longest_run:
+            longest_run = current_run
+        current_run = 0
+
     if current_run > longest_run:
         longest_run = current_run
     current_run = 0
