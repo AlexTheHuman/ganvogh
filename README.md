@@ -1,2 +1,2 @@
 # GANvogh - A robotic painter
-![Tim Curry as the devil in "Legend"](https://raw.githubusercontent.com/AlexTheHuman/ganvogh/master/img/legend.jpg =250x)
+<img src="https://raw.githubusercontent.com/AlexTheHuman/ganvogh/master/img/legend.jpg" alt="drawing" width="250"/>
