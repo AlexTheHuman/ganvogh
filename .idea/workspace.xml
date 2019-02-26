@@ -30,7 +30,7 @@
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="17">
-              <caret line="1" column="45" lean-forward="true" selection-start-line="1" selection-start-column="45" selection-end-line="1" selection-end-column="45" />
+              <caret line="1" column="120" lean-forward="false" selection-start-line="1" selection-start-column="120" selection-end-line="1" selection-end-column="120" />
               <folding />
             </state>
           </provider>
@@ -198,7 +198,14 @@
       <option name="project" value="LOCAL" />
       <updated>1551202552955</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Testing images in README">
+      <created>1551202667638</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1551202667638</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -231,7 +238,8 @@
     <MESSAGE value="Working towards multi layer painting." />
     <MESSAGE value="clean up files" />
     <MESSAGE value="added image." />
-    <option name="LAST_COMMIT_MESSAGE" value="added image." />
+    <MESSAGE value="Testing images in README" />
+    <option name="LAST_COMMIT_MESSAGE" value="Testing images in README" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -329,7 +337,7 @@
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
-          <caret line="1" column="45" lean-forward="true" selection-start-line="1" selection-start-column="45" selection-end-line="1" selection-end-column="45" />
+          <caret line="1" column="120" lean-forward="false" selection-start-line="1" selection-start-column="120" selection-end-line="1" selection-end-column="120" />
           <folding />
         </state>
       </provider>
