@@ -9,9 +9,12 @@ from skimage import img_as_float
 from skimage.measure import compare_mse as mse
 
 
+
+
+
 def stretch_contrast(img):
-    a = ImageOps.equalize(img)
-    return ImageOps.autocontrast(a)
+    #a = ImageOps.equalize(img)
+    return ImageOps.autocontrast(img)
 
 
 def gcr(im, percentage, separate=False):
@@ -33,7 +36,7 @@ def gcr(im, percentage, separate=False):
                 cmyk[i][x, y] = Q
             cmyk[3][x, y] = gray
     if separate:
-        return  cmyk_im
+        return cmyk_im
     return Image.merge('CMYK', cmyk_im)
 
 
@@ -292,7 +295,7 @@ def get_closest_dot(point, stroke_list):
 
 
 def cluster(img, number_of_colors, size):
-    np_array = image_resize(np.array(img), width=size)
+    np_array = image_resize(np.array(img), width=size) #, inter=cv2.INTER_NEAREST)
     old_size = np_array.shape
     np_array = np_array.reshape((-1, 3))
     kmeans = KMeans(n_clusters=number_of_colors, random_state=42).fit(np_array)
@@ -486,6 +489,7 @@ def doesnt_exist(w, m):
 def r_colors(original, number_of_colors, number_of_strokes):
     # Reduce colors via k-means clustering
     img = cluster(original, number_of_colors, number_of_strokes)
+    img = stretch_contrast(img)
     img = img.convert('RGBA')
     img = img.transpose(Image.FLIP_TOP_BOTTOM)
     return img
@@ -573,3 +577,32 @@ def remove_dupes(motions):
         if doesnt_exist(i, n_motions):
             n_motions.append(i)
     return n_motions
+
+def get_spots(im, sample):
+    cmyk = gcr(im, 100).split()
+    dots = []
+    #angle = 7
+    d_list = []
+    for channel in cmyk:
+        #channel = channel.rotate(angle, expand=1)
+        size = channel.size[0], channel.size[1]
+        half_tone = Image.new('L', size)
+        draw = ImageDraw.Draw(half_tone)
+        for x in range(0, channel.size[0], sample):
+            for y in range(0, channel.size[1], sample):
+                box = channel.crop((x, y, x + sample, y + sample))
+                stat = ImageStat.Stat(box)
+                diameter = (stat.mean[0] / 255) ** 0.5
+                edge = 0.5 * (1 - diameter)
+                x_pos, y_pos = (x + edge), (y + edge)
+                box_edge = sample * diameter
+                draw.ellipse((x_pos, y_pos, x_pos + box_edge, y_pos + box_edge), fill=255)
+                d_list.append((x,y,sample * diameter))
+        #half_tone = half_tone.rotate(-angle, expand=1)
+        width_half, height_half = half_tone.size
+        xx = (width_half - im.size[0]) / 2
+        yy = (height_half - im.size[1]) / 2
+        half_tone = half_tone.crop((xx, yy, xx + im.size[0], yy + im.size[1]))
+        dots.append(half_tone)
+        #angle += 15
+    return d_list

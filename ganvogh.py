@@ -1,24 +1,22 @@
 from PIL import Image, ImageDraw, ImageOps
 import turtle
 import util
-import random
-import math
 import sys
 import os
 import gcode as gc
 
-# Painting Parameters
 if len(sys.argv) > 1:
     file_name = sys.argv[1]
 else:
-    file_name = "input/face.png"
-
+    file_name = "input/abs-1.png"
 descriptor = os.path.basename(file_name).split(".")[0]
 folder = os.path.join('output', descriptor)
 if not os.path.isdir(folder):
     os.mkdir(folder)
+
+# Painting Parameters
 make_colors = False
-halftone_size = 12
+halftone_size = 5
 gray_scale = False
 number_of_colors = 10
 number_of_strokes = 120
@@ -32,37 +30,39 @@ WELL_RADIUS = 5
 
 original = Image.open(file_name).convert('RGB').resize((800,800), Image.BICUBIC)
 
+#A = util.get_spots(original, 10)
+#print A
+#quit()
+
 if make_colors:
     cmyk = util.gcr(original, 0)
     dots = util.halftone(original, original, halftone_size, 1)
     dots2 = util.halftone(original, cmyk, halftone_size, 1)
-
     h_t = Image.merge('RGB', dots).convert('RGB')
     c_t = Image.merge('CMYK', dots2).convert('RGB')
     original.putalpha(1)
     h_t.putalpha(1)
     c_t.putalpha(1)
-
     alphaComposited = Image.alpha_composite(c_t, h_t)
     alphaComposited = Image.alpha_composite(alphaComposited, original)
     original = alphaComposited.convert('RGB')
 if gray_scale:
     original = original.convert('LA').convert('RGB')
-    original = ImageOps.equalize(original)
+    #original = ImageOps.equalize(original)
+    original = util.stretch_contrast(original)
 
 clustered = util.r_colors(original, number_of_colors, number_of_strokes)
 pix = clustered.load()
 COLORS = util.get_colors(clustered)
+COLORS = [x for x in COLORS if x != "ffffffff"]
 util.draw_palette(COLORS).save(os.path.join(folder, "%s-colors.png" % descriptor))
-
-
 
 canvas = Image.new('RGB', canvas_size, (255,255,255))
 draw = ImageDraw.Draw(canvas)
 
 WELLS = [(59.0, 52.0+(float(x)*15.875)) for x in range(number_of_colors)]
 WATERS = [(59.0-15.875, 52.0+(float(x)*15.875)) for x in range(13)]
-brush_stroke_width = (canvas_size[0]/number_of_strokes)+1
+brush_stroke_width = (canvas_size[0]/number_of_strokes)
 brush_stroke_length = brush_stroke_width * 3
 width, height = clustered.size
 c_width, c_height = canvas_size
@@ -112,7 +112,7 @@ max_x = 0
 wn = turtle.Screen()        # creates a graphics window
 wn.tracer(2,0)
 alex = turtle.Turtle()      # create a turtle named alex
-alex.pensize(3)
+alex.pensize(4)
 alex.penup()
 o = ""
 o += gc.header(WELLS, WELL_CLEAR_HEIGHT, PAINT_HEIGHT)
