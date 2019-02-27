@@ -6,4 +6,4 @@
 
 **Requires:** Python 3, PIL, Numpy, Scikit-image, Open-CV
 
-**To run:** python3 ganvogh.py &lt;filename&gt;
+**To run:** python3 ganvogh.py &lt;image filename&gt;
