@@ -39,9 +39,6 @@ def header(WELLS, WELL_CLEAR_HEIGHT, PAINT_HEIGHT):
     o += "G90 ; use absolute positioning\n"
     o += "G0 Z%s; Go to WELL_CLEAR_HEIGHT on Z axis\n" % (WELL_CLEAR_HEIGHT)
     o += "G0 X%s Y%s; Go to well #0\n" % (WELLS[0][0], WELLS[0][1])
-    o += "G0 Z%s;\n" % (PAINT_HEIGHT)
-    o += "M117 Install Brush;\n"
-    o += "M25; (PAUSE install brush)\n"
     o += "G0 Z%s;\n" % (WELL_CLEAR_HEIGHT)
     o += "M117 Install Wells;\n"
     o += "M25; (PAUSE install palette)\n"

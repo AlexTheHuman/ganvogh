@@ -160,7 +160,7 @@ for c_index, color in enumerate(COLORS):
             #     current_run = 0
             current_run += 1
             o += "G0 X%s Y%s;\n" % (x1*x_ratio_b+ PAPER[0][0],y1*y_ratio_b+ PAPER[0][1])
-            o += "G0 Z%s;\n" % (PAINT_HEIGHT-1)
+            o += "G0 Z%s;\n" % (PAINT_HEIGHT)
             o += "G0 X%s Y%s;\n" % (x2*x_ratio_b+ PAPER[0][0],y2*y_ratio_b+ PAPER[0][1])
             alex.goto(x1-400,y1-400)
             alex.pendown()
