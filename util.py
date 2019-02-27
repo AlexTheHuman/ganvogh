@@ -489,7 +489,7 @@ def doesnt_exist(w, m):
 def r_colors(original, number_of_colors, number_of_strokes):
     # Reduce colors via k-means clustering
     img = cluster(original, number_of_colors, number_of_strokes)
-    img = stretch_contrast(img)
+    #img = stretch_contrast(img)
     img = img.convert('RGBA')
     img = img.transpose(Image.FLIP_TOP_BOTTOM)
     return img
@@ -547,7 +547,11 @@ def get_motions(islands, img, COLORS):
                     i.sort(key=lambda w: get_point_distance(w, last_point))
                     w = i.pop(0)
                     if doesnt_exist(w, motions[c][-1]):
-                        motions[c][-1] += shortest_path(last_point, w, pix, width, height)
+                        s_p = shortest_path(last_point, w, pix, width, height)
+                        if len(s_p) < 5:
+                            motions[c][-1] += s_p
+                        else:
+                            motions[c].append([w])
                         last_point = w
     n_motions = {}
     for c in COLORS:
