@@ -88,6 +88,7 @@ for color in COLORS:
         #if len(i) < 10:
         #    break
         for x,y in i:
+
             count += 1
             c = util.c_to_string(pix[x, y])
             if c == color:

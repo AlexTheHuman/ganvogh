@@ -2,47 +2,24 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2d66f306-3aa5-4be4-b2a0-7ad1c920886f" name="Default" comment="Optimizing for generated abstracts.">
-      <change afterPath="$PROJECT_DIR$/img/legend.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/ganvogh.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ganvogh.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/input/abs-1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/abs-1/abs-1-colors.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/abs-1/abs-1-painted.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/abs-1/abs-1.gcode" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/crablady/crablady-bw.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/crablady/crablady-c.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/face/face-bw.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/face/face-c.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/face/face-painted.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/frog/frog-bw.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/frog/frog-c.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/frog/frog-painted.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/giraffe/giraffe-bw.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/giraffe/giraffe-c.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/legend/legend-bw.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/legend/legend-c.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cell_paint.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/ganvogh.py" beforeDir="false" afterPath="$PROJECT_DIR$/ganvogh.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/input/abstract.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/input/abstract2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/input/bruce.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/input/crablady.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/input/face.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/input/frog.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/input/gamera.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/input/giraffe.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/input/maze.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/input/sloth.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/bruce/bruce-colors.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/bruce/bruce-painted.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/bruce/bruce.gcode" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/crablady/crablady-colors.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/crablady/crablady-painted.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/crablady/crablady.gcode" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/face/face-colors.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/face/face.gcode" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/frog/frog-colors.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/frog/frog-reference.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/frog/frog.gcode" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/gamera/gamera-colors.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/gamera/gamera-painted.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/gamera/gamera.gcode" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/giraffe/giraffe-colors.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/giraffe/giraffe-reference.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/giraffe/giraffe.gcode" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/legend/legend-colors.png" beforeDir="false" afterPath="$PROJECT_DIR$/output/legend/legend-colors.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/legend/legend-painted.png" beforeDir="false" afterPath="$PROJECT_DIR$/output/legend/legend-painted.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/legend/legend-reference.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/legend/legend.gcode" beforeDir="false" afterPath="$PROJECT_DIR$/output/legend/legend.gcode" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/maze/maze-colors.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/maze/maze.gcode" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/paint.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/util.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -53,11 +30,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ganvogh.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="840">
-              <caret line="56" column="45" selection-start-line="56" selection-start-column="45" selection-end-line="56" selection-end-column="45" />
+            <state relative-caret-position="1080">
+              <caret line="90" selection-start-line="90" selection-end-line="90" />
               <folding>
                 <element signature="e#0#42#0" expanded="true" />
               </folding>
@@ -75,11 +52,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/util.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="8160">
-              <caret line="544" column="47" selection-start-line="544" selection-start-column="47" selection-end-line="544" selection-end-column="47" />
+            <state relative-caret-position="383">
+              <caret line="553" column="50" selection-start-line="553" selection-start-column="50" selection-end-line="553" selection-end-column="50" />
               <folding>
                 <element signature="e#0#65#0" expanded="true" />
               </folding>
@@ -99,8 +76,8 @@
         <option value="$PROJECT_DIR$/cell_paint.py" />
         <option value="$PROJECT_DIR$/paint.py" />
         <option value="$PROJECT_DIR$/README.md" />
-        <option value="$PROJECT_DIR$/util.py" />
         <option value="$PROJECT_DIR$/ganvogh.py" />
+        <option value="$PROJECT_DIR$/util.py" />
       </list>
     </option>
   </component>
@@ -112,16 +89,6 @@
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
-      <flattenPackages />
-      <showMembers />
-      <showModules />
-      <showLibraryContents />
-      <hideEmptyPackages />
-      <abbreviatePackageNames />
-      <autoscrollToSource />
-      <autoscrollFromSource />
-      <sortByType />
-      <manualOrder />
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes />
@@ -276,7 +243,14 @@
       <option name="project" value="LOCAL" />
       <updated>1551203082842</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Optimizing for generated abstracts.">
+      <created>1551227844421</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1551227844421</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -286,13 +260,13 @@
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32857144" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32937366" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32829374" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.32937366" />
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Python Console" order="10" />
@@ -309,7 +283,8 @@
     <MESSAGE value="Testing images in README" />
     <MESSAGE value="Change image size in README." />
     <MESSAGE value="Updates to README" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updates to README" />
+    <MESSAGE value="Optimizing for generated abstracts." />
+    <option name="LAST_COMMIT_MESSAGE" value="Optimizing for generated abstracts." />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/cell_paint.py" />
@@ -318,16 +293,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="420">
           <caret line="28" column="12" selection-start-line="28" selection-start-column="12" selection-end-line="28" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ganvogh.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="840">
-          <caret line="56" column="45" selection-start-line="56" selection-start-column="45" selection-end-line="56" selection-end-column="45" />
-          <folding>
-            <element signature="e#0#42#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -344,10 +309,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/ganvogh.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1080">
+          <caret line="90" selection-start-line="90" selection-end-line="90" />
+          <folding>
+            <element signature="e#0#42#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/util.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8160">
-          <caret line="544" column="47" selection-start-line="544" selection-start-column="47" selection-end-line="544" selection-end-column="47" />
+        <state relative-caret-position="383">
+          <caret line="553" column="50" selection-start-line="553" selection-start-column="50" selection-end-line="553" selection-end-column="50" />
           <folding>
             <element signature="e#0#65#0" expanded="true" />
           </folding>
