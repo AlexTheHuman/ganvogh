@@ -8,7 +8,7 @@ import gcode as gc
 if len(sys.argv) > 1:
     file_name = sys.argv[1]
 else:
-    file_name = "input/abs-1.png"
+    file_name = "input/abs-2.png"
 descriptor = os.path.basename(file_name).split(".")[0]
 folder = os.path.join('output', descriptor)
 if not os.path.isdir(folder):
