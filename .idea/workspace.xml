@@ -1,26 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2d66f306-3aa5-4be4-b2a0-7ad1c920886f" name="Default" comment="Working towards multi layer painting.">
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/ganvogh.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ganvogh.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ganvogh.py" beforeDir="false" afterPath="$PROJECT_DIR$/ganvogh.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/crablady/crablady-colors.png" beforeDir="false" afterPath="$PROJECT_DIR$/output/crablady/crablady-colors.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/crablady/crablady.gcode" beforeDir="false" afterPath="$PROJECT_DIR$/output/crablady/crablady.gcode" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/face/face-colors.png" beforeDir="false" afterPath="$PROJECT_DIR$/output/face/face-colors.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/face/face-reference.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/face/face.gcode" beforeDir="false" afterPath="$PROJECT_DIR$/output/face/face.gcode" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/frog/frog-colors.png" beforeDir="false" afterPath="$PROJECT_DIR$/output/frog/frog-colors.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/frog/frog.gcode" beforeDir="false" afterPath="$PROJECT_DIR$/output/frog/frog.gcode" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/giraffe/giraffe-colors.png" beforeDir="false" afterPath="$PROJECT_DIR$/output/giraffe/giraffe-colors.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/giraffe/giraffe.gcode" beforeDir="false" afterPath="$PROJECT_DIR$/output/giraffe/giraffe.gcode" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/legend/legend-colors.png" beforeDir="false" afterPath="$PROJECT_DIR$/output/legend/legend-colors.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/legend/legend.gcode" beforeDir="false" afterPath="$PROJECT_DIR$/output/legend/legend.gcode" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/paint.py" beforeDir="false" afterPath="$PROJECT_DIR$/paint.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/util.py" afterDir="false" />
-    </list>
+    <list default="true" id="2d66f306-3aa5-4be4-b2a0-7ad1c920886f" name="Default" comment="Working towards multi layer painting." />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -213,12 +194,18 @@
       <option name="project" value="LOCAL" />
       <updated>1551137094437</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Working towards multi layer painting.">
+      <created>1551160502385</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1551160502385</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="67" y="25" width="1853" height="1055" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1863388" />
       <window_info id="Structure" order="1" weight="0.25" />
