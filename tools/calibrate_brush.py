@@ -2,7 +2,7 @@ import gcode as gc
 import os
 
 paint_well = (59.0, 52.0)
-start_location = (100.0,100.0)
+start_location = (130.0,100.0)
 length = 15.0
 side_step = 5.0
 

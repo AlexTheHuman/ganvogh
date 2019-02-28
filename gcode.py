@@ -1,3 +1,5 @@
+import random
+
 def clean_brush(WATERS, WELL_CLEAR_HEIGHT, WELL_RADIUS, DIP_HEIGHT):
     o = ""
 
@@ -28,6 +30,36 @@ def clean_brush(WATERS, WELL_CLEAR_HEIGHT, WELL_RADIUS, DIP_HEIGHT):
     o += "G90;\n"
     return o
 
+
+def water_dip(WATERS, WELL_CLEAR_HEIGHT, WELL_RADIUS, DIP_HEIGHT):
+    o = ""
+    w_w = random.choice(range(6))
+    o += "G0 Z%s; Go to well clear height on Z axis\n" % WELL_CLEAR_HEIGHT
+    o += "G0 X%s Y%s; Go to paint\n" % (WATERS[w_w][0], WATERS[w_w][1])
+    o += "G0 Z%s; Go to dip height on Z axis\n" % (DIP_HEIGHT - 3)
+    o += "G91;\n"
+    for c_c in range(1):
+        o += "G0 X-%s;\n" % WELL_RADIUS
+        o += "G0 X%s;\n" % WELL_RADIUS
+        o += "G0 Y-%s;\n" % WELL_RADIUS
+        o += "G0 Y%s;\n" % WELL_RADIUS
+        o += "G0 X%s;\n" % WELL_RADIUS
+        o += "G0 X-%s;\n" % WELL_RADIUS
+        o += "G0 Y%s;\n" % WELL_RADIUS
+        o += "G0 Y-%s;\n" % WELL_RADIUS
+    o += "G90;\n"
+    o += "G0 Z%s; Go to dip height on Z axis\n" % (DIP_HEIGHT + 1)
+    o += "G91;\n"
+    o += "G0 Y8;\n"
+    o += "G90;\n"
+    o += "G0 Z%s; Go to well clear height on Z axis\n" % WELL_CLEAR_HEIGHT
+    o += "G0 X%s Y%s; Go to paint\n" % (WATERS[6][0], WATERS[6][1])
+    o += "G0 Z%s; Go to dip height on Z axis\n" % (DIP_HEIGHT)
+    o += "G91;\n"
+    o += "G0 Y16;\n"
+    o += "G90;\n"
+    o += "G0 Z%s; Go to well clear height on Z axis\n" % WELL_CLEAR_HEIGHT
+    return o
 
 def header(WELLS, WELL_CLEAR_HEIGHT, PAINT_HEIGHT):
     o = ""

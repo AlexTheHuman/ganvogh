@@ -29,9 +29,9 @@ G0 Y-5;
 G0 X8;
 G90; absolute
 G0 Z35; Go to clear height on Z axis
-G0 X100.0 Y100.0; Go to test begin 1
+G0 X130.0 Y100.0; Go to test begin 1
 G0 Z25.0; Go to clear height on Z axis
-G0 X115.0 Y100.0; Go to test begin 1
+G0 X145.0 Y100.0; Go to test begin 1
 G0 Z35; Go to clear height on Z axis
 G0 Z35; Go to well clear height on Z axis
 G0 X59.0 Y52.0; Go to paint
@@ -48,9 +48,9 @@ G0 Y-5;
 G0 X8;
 G90; absolute
 G0 Z35; Go to clear height on Z axis
-G0 X100.0 Y105.0; Go to test begin 1
+G0 X130.0 Y105.0; Go to test begin 1
 G0 Z24.75; Go to clear height on Z axis
-G0 X115.0 Y105.0; Go to test begin 1
+G0 X145.0 Y105.0; Go to test begin 1
 G0 Z35; Go to clear height on Z axis
 G0 Z35; Go to well clear height on Z axis
 G0 X59.0 Y52.0; Go to paint
@@ -67,9 +67,9 @@ G0 Y-5;
 G0 X8;
 G90; absolute
 G0 Z35; Go to clear height on Z axis
-G0 X100.0 Y110.0; Go to test begin 1
+G0 X130.0 Y110.0; Go to test begin 1
 G0 Z24.5; Go to clear height on Z axis
-G0 X115.0 Y110.0; Go to test begin 1
+G0 X145.0 Y110.0; Go to test begin 1
 G0 Z35; Go to clear height on Z axis
 G0 Z35; Go to well clear height on Z axis
 G0 X59.0 Y52.0; Go to paint
@@ -86,9 +86,9 @@ G0 Y-5;
 G0 X8;
 G90; absolute
 G0 Z35; Go to clear height on Z axis
-G0 X100.0 Y115.0; Go to test begin 1
+G0 X130.0 Y115.0; Go to test begin 1
 G0 Z24.25; Go to clear height on Z axis
-G0 X115.0 Y115.0; Go to test begin 1
+G0 X145.0 Y115.0; Go to test begin 1
 G0 Z35; Go to clear height on Z axis
 G0 Z35; Go to well clear height on Z axis
 G0 X59.0 Y52.0; Go to paint
@@ -105,9 +105,9 @@ G0 Y-5;
 G0 X8;
 G90; absolute
 G0 Z35; Go to clear height on Z axis
-G0 X100.0 Y120.0; Go to test begin 1
+G0 X130.0 Y120.0; Go to test begin 1
 G0 Z24.0; Go to clear height on Z axis
-G0 X115.0 Y120.0; Go to test begin 1
+G0 X145.0 Y120.0; Go to test begin 1
 G0 Z35; Go to clear height on Z axis
 G0 Z35; Go to well clear height on Z axis
 G0 X59.0 Y52.0; Go to paint
@@ -124,9 +124,9 @@ G0 Y-5;
 G0 X8;
 G90; absolute
 G0 Z35; Go to clear height on Z axis
-G0 X100.0 Y125.0; Go to test begin 1
+G0 X130.0 Y125.0; Go to test begin 1
 G0 Z23.75; Go to clear height on Z axis
-G0 X115.0 Y125.0; Go to test begin 1
+G0 X145.0 Y125.0; Go to test begin 1
 G0 Z35; Go to clear height on Z axis
 G0 Z35; Go to well clear height on Z axis
 G0 X59.0 Y52.0; Go to paint
@@ -143,9 +143,9 @@ G0 Y-5;
 G0 X8;
 G90; absolute
 G0 Z35; Go to clear height on Z axis
-G0 X100.0 Y130.0; Go to test begin 1
+G0 X130.0 Y130.0; Go to test begin 1
 G0 Z23.5; Go to clear height on Z axis
-G0 X115.0 Y130.0; Go to test begin 1
+G0 X145.0 Y130.0; Go to test begin 1
 G0 Z35; Go to clear height on Z axis
 G0 Z35; Go to well clear height on Z axis
 G0 X59.0 Y52.0; Go to paint
@@ -162,9 +162,9 @@ G0 Y-5;
 G0 X8;
 G90; absolute
 G0 Z35; Go to clear height on Z axis
-G0 X100.0 Y135.0; Go to test begin 1
+G0 X130.0 Y135.0; Go to test begin 1
 G0 Z23.25; Go to clear height on Z axis
-G0 X115.0 Y135.0; Go to test begin 1
+G0 X145.0 Y135.0; Go to test begin 1
 G0 Z35; Go to clear height on Z axis
 G0 Z35; Go to well clear height on Z axis
 G0 X59.0 Y52.0; Go to paint
@@ -181,9 +181,9 @@ G0 Y-5;
 G0 X8;
 G90; absolute
 G0 Z35; Go to clear height on Z axis
-G0 X100.0 Y140.0; Go to test begin 1
+G0 X130.0 Y140.0; Go to test begin 1
 G0 Z23.0; Go to clear height on Z axis
-G0 X115.0 Y140.0; Go to test begin 1
+G0 X145.0 Y140.0; Go to test begin 1
 G0 Z35; Go to clear height on Z axis
 G0 Z55;
 G0 Y200; Go to end location

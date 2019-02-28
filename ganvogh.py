@@ -1,4 +1,4 @@
-from PIL import Image, ImageDraw, ImageOps
+from PIL import Image, ImageDraw
 import turtle
 import util
 import sys
@@ -23,16 +23,12 @@ number_of_strokes = 120
 canvas_size = (800,800)
 TRAVEL_HEIGHT = 30
 WELL_CLEAR_HEIGHT = 35
-PAINT_HEIGHT = 25
-DIP_HEIGHT = 26
+PAINT_HEIGHT = 24.0
+DIP_HEIGHT = 25
 PAPER = [(75.0,75.0), (232.0,232.0)]
 WELL_RADIUS = 5
 
 original = Image.open(file_name).convert('RGB').resize((800,800), Image.BICUBIC)
-
-#A = util.get_spots(original, 10)
-#print A
-#quit()
 
 if make_colors:
     cmyk = util.gcr(original, 0)
@@ -135,7 +131,9 @@ for c_index, color in enumerate(COLORS):
             longest_run = current_run
         current_run = 0
         for a, b in motions[color].pop(0):
-            if count % 40 == 0:
+            if count % (30 * 10) == 0:
+                o += gc.water_dip(WATERS, WELL_CLEAR_HEIGHT, WELL_RADIUS, DIP_HEIGHT)
+            if count % 30 == 0:
                 o += gc.well_dip(c_index, WELLS, WELL_CLEAR_HEIGHT, DIP_HEIGHT, WELL_RADIUS)
                 alex.penup()
                 lifts += 1
