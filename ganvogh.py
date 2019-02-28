@@ -8,7 +8,7 @@ import gcode as gc
 if len(sys.argv) > 1:
     file_name = sys.argv[1]
 else:
-    file_name = "input/abs-2.png"
+    file_name = "input/abs-3.png"
 descriptor = os.path.basename(file_name).split(".")[0]
 folder = os.path.join('output', descriptor)
 if not os.path.isdir(folder):
@@ -19,7 +19,7 @@ make_colors = False
 halftone_size = 5
 gray_scale = False
 number_of_colors = 10
-number_of_strokes = 120
+number_of_strokes = 150
 canvas_size = (800,800)
 TRAVEL_HEIGHT = 30
 WELL_CLEAR_HEIGHT = 35
@@ -89,7 +89,7 @@ for color in COLORS:
             c = util.c_to_string(pix[x, y])
             if c == color:
                 if util.doesnt_exist((x,y), seen):
-                    best_angle = util.find_angle(original, canvas, color, (x*x_ratio, y*y_ratio), brush_stroke_length, brush_stroke_width, min_angle=ref_angle-ref_move, max_angle=ref_angle+ref_move, step=5)
+                    best_angle = 45 #util.find_angle(original, canvas, color, (x*x_ratio, y*y_ratio), brush_stroke_length, brush_stroke_width, min_angle=ref_angle-ref_move, max_angle=ref_angle+ref_move, step=5)
                     xy = util.brushstroke(draw, (x*x_ratio, y*y_ratio), best_angle, color, brush_stroke_length, brush_stroke_width)
                 else:
                     xy = ((x*x_ratio,y*y_ratio), (x*x_ratio,y*y_ratio))
