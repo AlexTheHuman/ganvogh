@@ -2,9 +2,20 @@ from PIL import Image, ImageDraw, ImageEnhance
 import gcode as gc
 import sys
 import util
-import random
 import os
 
+do_file = "input/elady.jpg"
+
+color1 = '#00ffff'
+color2 = '#ff00ff'
+color3 = '#ffff00'
+black = '#000000'
+
+max_strokes = 10000
+
+#canvas_name = None
+canvas_name = "input/canvas.png"
+rotate = 0
 brightness_multiplier = 1.0
 make_colors = False
 halftone_size = 10
@@ -25,20 +36,25 @@ WATERS = [(59.0-15.875, 52.0+(float(x)*15.875)) for x in range(13)]
 brush_stroke_width = (canvas_size[0]/number_of_strokes)
 brush_stroke_length = brush_stroke_width * 3
 
-channel_colors = ['ff000000', 'ff00ffff', 'ffff00ff', 'ffffff00'] #[::-1]
 
-canvas = Image.new('RGB', canvas_size, (255,255,255))
+
+channel_colors = [color1, color2, color3, black]
+
+if canvas_name is None:
+    canvas = Image.new('RGB', canvas_size, (255,255,255))
+else:
+    canvas = Image.open(canvas_name).convert('RGB').resize(canvas_size, Image.BICUBIC).transpose(Image.FLIP_TOP_BOTTOM)
 
 if len(sys.argv) > 1:
     file_name = sys.argv[1]
 else:
-    file_name = "input/crablady.png"
+    file_name = do_file
 descriptor = os.path.basename(file_name).split(".")[0]
 folder = os.path.join('output', descriptor)
 if not os.path.isdir(folder):
     os.mkdir(folder)
 
-original_large = Image.open(file_name).convert('RGB').resize((800,800), Image.BICUBIC).transpose(Image.FLIP_TOP_BOTTOM)
+original_large = Image.open(file_name).convert('RGB').resize(canvas_size, Image.BICUBIC).transpose(Image.FLIP_TOP_BOTTOM)
 
 if make_colors:
     cmyk = util.gcr(original_large, 0)
@@ -55,7 +71,7 @@ if make_colors:
 original = original_large.resize((number_of_strokes,number_of_strokes), Image.BICUBIC)
 enhance = ImageEnhance.Brightness(original)
 original = enhance.enhance(brightness_multiplier)
-original.show()
+#original.show()
 width, height = original.size
 c_width, c_height = canvas_size
 x_ratio = c_width/float(width)
@@ -75,7 +91,7 @@ channels = util.gcr(original, 100, separate=True)
 
 new_channels = []
 for channel in channels:
-    while util.count_nonblack_pil(channel.convert('1')) > 10000:
+    while util.count_nonblack_pil(channel.convert('1')) > max_strokes:
         print("ENHANCE!", util.count_nonblack_pil(channel.convert('1')))
         enhance = ImageEnhance.Brightness(channel)
         channel = enhance.enhance(0.95)
@@ -89,7 +105,7 @@ o += gc.header(WELLS, WELL_CLEAR_HEIGHT, PAINT_HEIGHT)
 
 color_count = 0
 
-for c_num, img in enumerate(channels[::-1]):
+for c_num, img in enumerate(channels):  # [::-1]
     canvas_temp = Image.new('RGB', canvas_size, (255,255,255))
     draw = ImageDraw.Draw(canvas_temp)
     o += gc.clean_brush(WATERS, WELL_CLEAR_HEIGHT, WELL_RADIUS, DIP_HEIGHT)
