@@ -9,9 +9,6 @@ from skimage import img_as_float
 from skimage.measure import compare_mse as mse
 
 
-
-
-
 def stretch_contrast(img):
     #a = ImageOps.equalize(img)
     return ImageOps.autocontrast(img)
@@ -610,3 +607,30 @@ def get_spots(im, sample):
         dots.append(half_tone)
         #angle += 15
     return d_list
+
+def count_nonblack_pil(img):
+    """Return the number of pixels in img that are not black.
+    img must be a PIL.Image object in mode RGB.
+
+    """
+    bbox = img.getbbox()
+    if not bbox: return 0
+    return sum(img.crop(bbox)
+               .point(lambda x: 255 if x else 0)
+               .convert("L")
+               .point(bool)
+               .getdata())
+
+
+def white_to_alpha(img):
+    a = img.convert('RGBA')
+    pixdata = a.load()
+    width, height = a.size
+    for y in range(height):
+        for x in range(width):
+            if pixdata[x, y] == (255, 255, 255, 255):
+                pixdata[x, y] = (255, 255, 255, 0)
+            else:
+                g = pixdata[x, y]
+                pixdata[x, y] = (g[0], g[1], g[2], 128)
+    return a

@@ -8,7 +8,7 @@ import gcode as gc
 if len(sys.argv) > 1:
     file_name = sys.argv[1]
 else:
-    file_name = "input/abs-3.png"
+    file_name = "input/jeff.png"
 descriptor = os.path.basename(file_name).split(".")[0]
 folder = os.path.join('output', descriptor)
 if not os.path.isdir(folder):
@@ -18,7 +18,7 @@ if not os.path.isdir(folder):
 make_colors = False
 halftone_size = 5
 gray_scale = False
-number_of_colors = 10
+number_of_colors = 8
 number_of_strokes = 150
 canvas_size = (800,800)
 TRAVEL_HEIGHT = 30
