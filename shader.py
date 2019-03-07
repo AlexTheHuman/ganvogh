@@ -4,7 +4,7 @@ import sys
 import util
 import os
 
-do_file = "input/elady.jpg"
+do_file = "input/frog.png"
 
 color1 = '#00ffff'
 color2 = '#ff00ff'
@@ -13,10 +13,10 @@ black = '#000000'
 
 max_strokes = 10000
 
-#canvas_name = None
-canvas_name = "input/canvas.png"
+canvas_name = None
+#canvas_name = "input/canvas.png"
 rotate = 0
-brightness_multiplier = 1.0
+brightness_multiplier = 0.8
 make_colors = False
 halftone_size = 10
 black_and_white = False
@@ -35,8 +35,6 @@ WELLS = [(59.0, 52.0+(float(x)*15.875)) for x in range(number_of_colors)]
 WATERS = [(59.0-15.875, 52.0+(float(x)*15.875)) for x in range(13)]
 brush_stroke_width = (canvas_size[0]/number_of_strokes)
 brush_stroke_length = brush_stroke_width * 3
-
-
 
 channel_colors = [color1, color2, color3, black]
 

@@ -166,7 +166,7 @@ def brushstroke(d, where, angle, color, length, width):
     opposite = np.sin(angle) * (float(length)/2.0)
     adjacent = np.cos(angle) * (float(length)/2.0)
     xy = [(int(where[0] + adjacent), int(where[1] + opposite)), (int(where[0] - adjacent), int(where[1] - opposite))]
-    d.line(xy, fill=int(color, 16), width=int(width))
+    d.line(xy, fill=color, width=int(width))
     return xy
 
 
