@@ -7,6 +7,7 @@ from sklearn.cluster import KMeans
 import cv2
 from skimage import img_as_float
 from skimage.measure import compare_mse as mse
+import colorsys
 
 
 def stretch_contrast(img):
@@ -91,9 +92,9 @@ def get_black_position(c):
 
 def c_to_string(c, reverse=False):
     if reverse:
-        return "#" + c[6:8] + c[4:6] + c[2:4]
+        return "#" + c[5:8] + c[3:5] + c[1:3]
     else:
-        return hex(c[3])[2:].rjust(2,'0') + hex(c[2])[2:].rjust(2,'0') + hex(c[1])[2:].rjust(2,'0') + hex(c[0])[2:].rjust(2,'0')
+        return hex(c[2])[2:].rjust(2,'0') + hex(c[1])[2:].rjust(2,'0') + hex(c[0])[2:].rjust(2,'0')
 
 
 def mse(a, b):
@@ -166,7 +167,7 @@ def brushstroke(d, where, angle, color, length, width):
     opposite = np.sin(angle) * (float(length)/2.0)
     adjacent = np.cos(angle) * (float(length)/2.0)
     xy = [(int(where[0] + adjacent), int(where[1] + opposite)), (int(where[0] - adjacent), int(where[1] - opposite))]
-    d.line(xy, fill=int(color, 16), width=int(width))
+    d.line(xy, fill=color, width=int(width))
     return xy
 
 
@@ -634,3 +635,11 @@ def white_to_alpha(img):
                 g = pixdata[x, y]
                 pixdata[x, y] = (g[0], g[1], g[2], 128)
     return a
+
+def rotate_color(c, a):
+    c = [255.0 * x for x in colorsys.rgb_to_hsv(c[0], c[1], c[2])]
+    c[0] = float((a + c[0]) % 256)
+    c = [x / 255.0 for x in c]
+    c = colorsys.hsv_to_rgb(c[0], c[1], c[2])
+    c = c_to_string([255] + [int(x * 255.0) for x in c])
+    return c

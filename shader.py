@@ -4,7 +4,7 @@ import sys
 import util
 import os
 
-do_file = "input/elady.jpg"
+do_file = "input/legend.png"
 
 color1 = '#00ffff'
 color2 = '#ff00ff'
