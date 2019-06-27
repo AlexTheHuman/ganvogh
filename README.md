@@ -23,4 +23,10 @@ with water at the proper times.
 
 **Requires:** Python 3, PIL, Numpy, Scikit-image, Open-CV
 
-**To run:** python3 ganvogh.py &lt;image filename&gt;
+**Usage**: ganvogh.py [-g] [-c COLOR_COUNT] IMAGE_FILE
+
+IMAGE_FILE      The .png or .jpg to process.
+
+-g              Convert image to gray scale
+
+-c COLOR_COUNT  Number of colors, defaults to 8
