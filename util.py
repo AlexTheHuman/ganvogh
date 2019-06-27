@@ -1,18 +1,10 @@
 from PIL import Image, ImageDraw, ImageOps, ImageChops, ImageStat
-import random
 import math
 import numpy as np
-from skimage import io, filters, transform
 from sklearn.cluster import KMeans
 import cv2
-from skimage import img_as_float
 from skimage.measure import compare_mse as mse
 import colorsys
-
-
-def stretch_contrast(img):
-    #a = ImageOps.equalize(img)
-    return ImageOps.autocontrast(img)
 
 
 def gcr(im, percentage, separate=False):
@@ -69,25 +61,6 @@ def halftone(im, cmyk, sample, scale):
         dots.append(half_tone)
         angle += 15
     return dots
-
-
-def rmsdiff(im1, im2):
-    "Calculate the root-mean-square difference between two images"
-    diff = ImageChops.difference(im1, im2)
-    h = diff.histogram()
-    sq = (value*((idx%256)**2) for idx, value in enumerate(h))
-    sum_of_squares = sum(sq)
-    #rms = math.sqrt(sum_of_squares/float(im1.size[0] * im1.size[1]))
-    rms = sum_of_squares/float(im1.size[0] * im1.size[1])
-    return rms
-
-
-def get_color_position(c):
-    return (50,50)# (random.randint(45,55),random.randint(45,55)+(c*10))
-
-
-def get_black_position(c):
-    return (50,90)# (random.randint(45,55),random.randint(45,55)+(c*10))
 
 
 def c_to_string(c, reverse=False):
@@ -155,12 +128,6 @@ def color_compare(item1, item2):
     else:
         return 0
 
-def b_s(where, angle, length):
-    angle = np.deg2rad(angle)
-    opposite = np.sin(angle) * (float(length) / 2.0)
-    adjacent = np.cos(angle) * (float(length) / 2.0)
-    xy = [(int(where[0] + adjacent), int(where[1] + opposite)), (int(where[0] - adjacent), int(where[1] - opposite))]
-    return xy
 
 def brushstroke(d, where, angle, color, length, width):
     angle = np.deg2rad(angle)
@@ -171,20 +138,6 @@ def brushstroke(d, where, angle, color, length, width):
     return xy
 
 
-def dot(img, where, color, dia):
-    x, y = where
-    i = Image.fromarray(img, 'RGB')
-    d = ImageDraw.Draw(i)
-    rad = dia/2
-    a = x - rad
-    b = y - rad
-    c = x + rad
-    d = y + rad
-    d.ellipse((a, b, c, d), color)
-    del d
-    return np.array(i)
-
-
 def draw_circle(x, y, color, draw, dia):
     rad = dia/2
     a = x - rad
@@ -192,30 +145,6 @@ def draw_circle(x, y, color, draw, dia):
     c = x + rad
     d = y + rad
     draw.ellipse((a, b, c, d), color)
-
-
-def get_closest_old(point, stroke_list, max_skip):
-    #random.shuffle(stroke_list)
-    best_distance = None
-    i = None
-    flip = False
-    for x, s in enumerate(stroke_list):
-        dist = abs(math.sqrt((s[0][0] - point[0])**2 + (s[0][1] - point[1])**2))
-        dist2 = abs(math.sqrt((s[1][0] - point[0])** 2 + (s[1][1] - point[1]) ** 2))
-        if best_distance is None or dist < best_distance:
-            best_distance = dist
-            i = x
-            flip = False
-        if best_distance is None or dist2 < best_distance:
-            best_distance = dist2
-            i = x
-            flip = True
-    #if best_distance > max_skip:
-    #    return stroke_list.pop(0)
-    if not flip:
-        return stroke_list.pop(i)
-    else:
-        return stroke_list.pop(i)[::-1]
 
 
 def get_closest(point, stroke_list, max_skip):
@@ -281,7 +210,6 @@ def get_next(point, stroke_list, max_skip):
 
 
 def get_closest_dot(point, stroke_list):
-    #return stroke_list.pop(0)
     best_distance = None
     i = None
     for x, s in enumerate(stroke_list):
@@ -293,7 +221,7 @@ def get_closest_dot(point, stroke_list):
 
 
 def cluster(img, number_of_colors, size):
-    np_array = image_resize(np.array(img), width=size) #, inter=cv2.INTER_NEAREST)
+    np_array = image_resize(np.array(img), width=size)
     old_size = np_array.shape
     np_array = np_array.reshape((-1, 3))
     kmeans = KMeans(n_clusters=number_of_colors, random_state=42).fit(np_array)
@@ -323,24 +251,7 @@ def draw_palette(COLORS):
     for x, color in enumerate(COLORS):
         a, b = well_locations.pop(0)
         draw_circle(100 - (a + 75), (b + 25), int(color, 16), dr, 20)
-    #img2.show()
-    #img2.save('palette.png')
     return img2
-
-
-def image_diff(i1, i2):
-    assert i1.mode == i2.mode, "Different kinds of images."
-    assert i1.size == i2.size, "Different sizes."
-
-    pairs = zip(i1.getdata(), i2.getdata())
-    if len(i1.getbands()) == 1:
-        # for gray-scale jpegs
-        dif = sum(abs(p1 - p2) for p1, p2 in pairs)
-    else:
-        dif = sum(abs(c1 - c2) for p1, p2 in pairs for c1, c2 in zip(p1, p2))
-
-    ncomponents = i1.size[0] * i1.size[1] * 3
-    return (dif / 255.0 * 100) / ncomponents
 
 
 def find_angle(original, canvas, color, where, brush_stroke_length_min, brush_stroke_length_max, brush_stroke_length_step, brush_stroke_width, min_angle=0, max_angle=180, step=12):
@@ -364,45 +275,6 @@ def find_angle(original, canvas, color, where, brush_stroke_length_min, brush_st
                 best_angle = a
                 best_length = brush_stroke_length
     return best_angle, best_length
-
-
-# def get_area(where, pix, c):
-#     r = []
-#     x, y = where
-#     pix[x, y] = (pix[x, y][0], pix[x, y][1], pix[x, y][2], 0)
-#     ways = [(-1, 0), (0, -1), (0, 1), (1, 0), (1, 1), (-1, 1), (-1, -1), (1, -1)]
-#     sides = []
-#     for xd, yd in ways:
-#         sides.append(c_to_string(pix[x + xd, y + yd]))
-#     if sides[0] == c:
-#         x -= 1
-#         r.append(get_area((x-1,y), pix))
-#     if sides[1] == c:
-#         y -= 1
-#         r.append(get_area((x - 1, y), pix))
-#     if sides[2] == c:
-#         y += 1
-#         r.append(get_area((x - 1, y), pix))
-#     if sides[3] == c:
-#         x += 1
-#         r.append(get_area((x - 1, y), pix))
-#     if sides[4] == c:
-#         x += 1
-#         y += 1
-#         r.append(get_area((x - 1, y), pix))
-#     if sides[5] == c:
-#         x -= 1
-#         y += 1
-#         r.append(get_area((x - 1, y), pix))
-#     if sides[6] == c:
-#         x -= 1
-#         y -= 1
-#         r.append(get_area((x - 1, y), pix))
-#     if sides[7] == c:
-#         x -= 1
-#         y += 1
-#         r.append(get_area((x - 1, y), pix))
-#     return
 
 
 def seen(where, pix):
@@ -469,14 +341,13 @@ def shortest_path(f, t, pix, width, height):
                     all_the_way = False
                     break
         if all_the_way:
-            #print(working[x-5:x+5,y-5:y+5])
-            #print("Couldn't get there!")
-            #quit()
             break
     return result[::-1]
 
+
 def dist_x_y(a):
     return (a[0] * 1000) + a[1]
+
 
 def doesnt_exist(w, m):
     for item in m:
@@ -484,13 +355,6 @@ def doesnt_exist(w, m):
             return False
     return True
 
-def r_colors(original, number_of_colors, number_of_strokes):
-    # Reduce colors via k-means clustering
-    img = cluster(original, number_of_colors, number_of_strokes)
-    #img = stretch_contrast(img)
-    img = img.convert('RGBA')
-    img = img.transpose(Image.FLIP_TOP_BOTTOM)
-    return img
 
 def show_composite(i1, i2):
     a = i1.copy()
@@ -499,6 +363,7 @@ def show_composite(i1, i2):
     b.putalpha(1)
     alphaComposited = Image.alpha_composite(a, b)
     alphaComposited.show()
+
 
 def get_islands(img, COLORS):
     height, width = img.size
@@ -566,6 +431,7 @@ def get_motions(islands, img, COLORS):
             n_motions[c].append(r)
     return n_motions
 
+
 def get_points_in_order(img):
     COLORS = get_colors(img)
     color_islands = get_islands(img, COLORS)
@@ -579,6 +445,7 @@ def remove_dupes(motions):
         if doesnt_exist(i, n_motions):
             n_motions.append(i)
     return n_motions
+
 
 def get_spots(im, sample):
     cmyk = gcr(im, 100).split()
@@ -609,6 +476,7 @@ def get_spots(im, sample):
         #angle += 15
     return d_list
 
+
 def count_nonblack_pil(img):
     """Return the number of pixels in img that are not black.
     img must be a PIL.Image object in mode RGB.
@@ -635,6 +503,7 @@ def white_to_alpha(img):
                 g = pixdata[x, y]
                 pixdata[x, y] = (g[0], g[1], g[2], 128)
     return a
+
 
 def rotate_color(c, a):
     c = [255.0 * x for x in colorsys.rgb_to_hsv(c[0], c[1], c[2])]
