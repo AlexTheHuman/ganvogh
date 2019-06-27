@@ -92,7 +92,7 @@ def get_black_position(c):
 
 def c_to_string(c, reverse=False):
     if reverse:
-        return "#" + c[5:8] + c[3:5] + c[1:3]
+        return "#" + c[4:7] + c[2:4] + c[0:2]
     else:
         return hex(c[2])[2:].rjust(2,'0') + hex(c[1])[2:].rjust(2,'0') + hex(c[0])[2:].rjust(2,'0')
 
@@ -343,27 +343,27 @@ def image_diff(i1, i2):
     return (dif / 255.0 * 100) / ncomponents
 
 
-def find_angle(original, canvas, color, where, brush_stroke_length, brush_stroke_width, min_angle=0, max_angle=180, step=12):
-    x, y  = where
-    r = brush_stroke_length
+def find_angle(original, canvas, color, where, brush_stroke_length_min, brush_stroke_length_max, brush_stroke_length_step, brush_stroke_width, min_angle=0, max_angle=180, step=12):
+    x, y = where
+    r = brush_stroke_length_max
     o = original.crop((x-r,y-r,x+r,y+r))
     can = canvas.crop((x-r,y-r,x+r,y+r))
-    #o.show()
-    #can.show()
-    #quit()
     lowest_error = None
     best_angle = None
-    for a in range(min_angle, max_angle, step):
-        c = can.copy()
-        d = ImageDraw.Draw(c)
-        brushstroke(d, (r,r), a, color, brush_stroke_length, brush_stroke_width)
-        del d
-        error = mse(o, c)
-        del c
-        if lowest_error is None or error < lowest_error:
-            lowest_error = error
-            best_angle = a
-    return best_angle
+    best_length = None
+    for brush_stroke_length in range(brush_stroke_length_min, brush_stroke_length_max, brush_stroke_length_step):
+        for a in range(min_angle, max_angle, step):
+            c = can.copy()
+            d = ImageDraw.Draw(c)
+            brushstroke(d, (r,r), a, color, brush_stroke_length, brush_stroke_width)
+            del d
+            error = mse(o, c)
+            del c
+            if lowest_error is None or error < lowest_error:
+                lowest_error = error
+                best_angle = a
+                best_length = brush_stroke_length
+    return best_angle, best_length
 
 
 # def get_area(where, pix, c):

@@ -1,190 +1,182 @@
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageOps
 import turtle
 import util
-import sys
 import os
 import gcode as gc
+import argparse
 
-if len(sys.argv) > 1:
-    file_name = sys.argv[1]
-else:
-    file_name = "input/jeff.png"
-descriptor = os.path.basename(file_name).split(".")[0]
+# Printer parameters (Change these values to match your 3D printer/CNC machine)
+painting_size = 150  # Max x/y dimension of paining in mm
+origin_offset = (75, 75)  # x/y origin of painting on printer in mm, float ok
+canvas_height = 24  # Z height at which brush is actively painting in mm, float ok
+travel_height = 30  # Z travel height in mm, float ok
+well_clear_height = 35  # Z height to clear wall of paint wells
+dip_height = 25  # Z height to lower to when dipping brush
+brush_stroke_resolution = 100  # Maximum number of brush strokes along x or y axis
+well_radius = 5
+
+# Get command line arguments
+parser = argparse.ArgumentParser(description='This application takes an image, and turns it into a sequence of g-code commands to run a 3d printer.')
+parser.add_argument('IMAGE_FILE', action="store", help='The .png or .jpg to process.')
+parser.add_argument('-g', action='store_true', dest="GRAYSCALE", default=False, help='Convert image to gray scale')
+parser.add_argument('-c', action='store', dest='COLOR_COUNT', type=int, default=8, help='Number of colors, defaults to 8')
+args = parser.parse_args()
+
+# Create output directory for resultant g-code
+descriptor = os.path.basename(args.IMAGE_FILE).split(".")[0]
 folder = os.path.join('output', descriptor)
 if not os.path.isdir(folder):
     os.mkdir(folder)
 
-# Painting Parameters
-make_colors = False
-halftone_size = 5
-gray_scale = False
-number_of_colors = 8
-number_of_strokes = 150
+# Constants
 canvas_size = (800,800)
-TRAVEL_HEIGHT = 30
-WELL_CLEAR_HEIGHT = 35
-PAINT_HEIGHT = 24.0
-DIP_HEIGHT = 25
-PAPER = [(75.0,75.0), (232.0,232.0)]
-WELL_RADIUS = 5
 
-original = Image.open(file_name).convert('RGB').resize((800,800), Image.BICUBIC)
+# Open image file
+original = Image.open(args.IMAGE_FILE).convert('RGB').resize(canvas_size, Image.BICUBIC)
 
-if make_colors:
-    cmyk = util.gcr(original, 0)
-    dots = util.halftone(original, original, halftone_size, 1)
-    dots2 = util.halftone(original, cmyk, halftone_size, 1)
-    h_t = Image.merge('RGB', dots).convert('RGB')
-    c_t = Image.merge('CMYK', dots2).convert('RGB')
-    original.putalpha(1)
-    h_t.putalpha(1)
-    c_t.putalpha(1)
-    alphaComposited = Image.alpha_composite(c_t, h_t)
-    alphaComposited = Image.alpha_composite(alphaComposited, original)
-    original = alphaComposited.convert('RGB')
-if gray_scale:
+# Convert to gray scale is argument is set
+if args.GRAYSCALE:
     original = original.convert('LA').convert('RGB')
-    #original = ImageOps.equalize(original)
-    original = util.stretch_contrast(original)
 
-clustered = util.r_colors(original, number_of_colors, number_of_strokes)
-pix = clustered.load()
-COLORS = util.get_colors(clustered)
-COLORS = [x for x in COLORS if x != "ffffffff"]
-util.draw_palette(COLORS).save(os.path.join(folder, "%s-colors.png" % descriptor))
+# Perform clustering to reduce colors to COLOR_COUNT, and create pixel access object
+resized = util.cluster(original,
+                       args.COLOR_COUNT,
+                       brush_stroke_resolution)
+resized = resized.convert('RGB')
+resized = resized.transpose(Image.FLIP_TOP_BOTTOM)
+resized = ImageOps.autocontrast(resized)
+color_locations = resized.load()
 
+# Create a working canvas for composing the painting, and create a pixel access object
 canvas = Image.new('RGB', canvas_size, (255,255,255))
 draw = ImageDraw.Draw(canvas)
 
-WELLS = [(59.0, 52.0+(float(x)*15.875)) for x in range(number_of_colors)]
+# Determine well locations NEEDS PARAMETERIZATION
+WELLS = [(59.0, 52.0+(float(x)*15.875)) for x in range(args.COLOR_COUNT)]
 WATERS = [(59.0-15.875, 52.0+(float(x)*15.875)) for x in range(13)]
-brush_stroke_width = (canvas_size[0]/number_of_strokes)
-brush_stroke_length = brush_stroke_width * 3
-width, height = clustered.size
+
+# Brush stroke object
+class BrushStroke:
+    def __init__(self, color, length, xy):
+        self.color = color
+        self.length = length
+        self.xy = xy
+
+
+# Calculated parameters
+width, height = resized.size
+brush_stroke_width = (canvas_size[0]//brush_stroke_resolution)
+brush_stroke_length_min = brush_stroke_width * 2
+brush_stroke_length_max = brush_stroke_width * 5
+brush_stroke_length_step = (brush_stroke_length_max - brush_stroke_length_min) // 3
 c_width, c_height = canvas_size
 x_ratio = c_width/float(width)
 y_ratio = c_height/float(height)
-
-points = util.get_points_in_order(clustered)
-
-
-
-motions = {}
-ref_angle = 70  # float(random.randint(0,360))
-ref_move = 22  # float(random.randint(3,5))
-count = 0
-for color in COLORS:
-    motions[color] = []
-    print ("Doing color:", color)
-#    for x in range(number_of_strokes):
-#        for y in range(number_of_strokes):
-    for i in points[color]:
-        motions[color].append([])
-        seen = []
-        #if len(i) < 10:
-        #    break
-        for x,y in i:
-
-            count += 1
-            c = util.c_to_string(pix[x, y])
-            if c == color:
-                if util.doesnt_exist((x,y), seen):
-                    best_angle = 45 #util.find_angle(original, canvas, color, (x*x_ratio, y*y_ratio), brush_stroke_length, brush_stroke_width, min_angle=ref_angle-ref_move, max_angle=ref_angle+ref_move, step=5)
-                    xy = util.brushstroke(draw, (x*x_ratio, y*y_ratio), best_angle, color, brush_stroke_length, brush_stroke_width)
-                else:
-                    xy = ((x*x_ratio,y*y_ratio), (x*x_ratio,y*y_ratio))
-                motions[color][-1].append(xy)
-                seen.append((x,y))
-
-canvas = canvas.transpose(Image.FLIP_TOP_BOTTOM)
-canvas.show()
-canvas.save(os.path.join(folder, "%s-painted.png" % descriptor))
-
-p_width = float(PAPER[1][0] - PAPER[0][0])
-p_height = float(PAPER[1][1] - PAPER[0][1])
+to_do = width * height
+p_width = painting_size
+p_height = painting_size
 x_ratio_b = p_width/float(c_width)
 y_ratio_b = p_height/float(c_height)
-
 max_x = 0
+
+# Data storage
+colors = []
+brush_strokes = []
+
+# Iterate over image to calculate brush strokes
+count = 0
+for x in range(width):
+    brush_strokes.append([])
+    for y in range(height):
+        # Display status
+        if count % 100 == 0:
+            print("Calculating brushstroke %s of %s" % (count, to_do), end="\r", flush=True)
+        count += 1
+
+        # Get color and add to colors if not already
+        color = color_locations[x, y]
+        color_string = util.c_to_string(color)
+        if color_string not in colors:
+            colors.append(color_string)
+
+        # Calculate brushstroke angle
+        angle, length = util.find_angle(original, canvas, color, (x * x_ratio, y * y_ratio), brush_stroke_length_min, brush_stroke_length_max, brush_stroke_length_step, brush_stroke_width, min_angle=0, max_angle=90, step=90//8)
+
+        # Draw brush stroke on canvas
+        xy = util.brushstroke(draw, (x * x_ratio, y * y_ratio), angle, color, length, brush_stroke_width)
+
+        # Add data to brush strokes
+        brush_strokes[-1].append(BrushStroke(color, length, xy))
+
+# Create and save color palette image
+util.draw_palette(colors).save(os.path.join(folder, "%s-colors.png" % descriptor))
+
+# Save out canvas
+canvas = canvas.transpose(Image.FLIP_TOP_BOTTOM)
+canvas.save(os.path.join(folder, "%s-painted.png" % descriptor))
+
+# Set up turtle to draw
 wn = turtle.Screen()        # creates a graphics window
 wn.tracer(2,0)
 alex = turtle.Turtle()      # create a turtle named alex
-alex.pensize(4)
+alex.pensize(brush_stroke_width-1)
 alex.penup()
+
+# Start g-code with header
 o = ""
-o += gc.header(WELLS, WELL_CLEAR_HEIGHT, PAINT_HEIGHT)
-lifts = 0
-longest_run = 0
-current_run = 0
-all_count = 0
-for c_index, color in enumerate(COLORS):
-    alex.color(util.c_to_string(color, reverse=True))
-    count = 0
-    o += gc.clean_brush(WATERS, WELL_CLEAR_HEIGHT, WELL_RADIUS, DIP_HEIGHT)
-    lastX = 0
-    lastY = 0
-    while len(motions[color]) > 0:
-        lifts += 1
-        o += "G0 Z%s; Go to travel height on Z axis\n" % TRAVEL_HEIGHT
-        alex.penup()
-        if current_run > longest_run:
-            longest_run = current_run
-        current_run = 0
-        for a, b in motions[color].pop(0):
-            if count % (30 * 10) == 0:
-                o += gc.water_dip(WATERS, WELL_CLEAR_HEIGHT, WELL_RADIUS, DIP_HEIGHT)
+o += gc.header(WELLS, well_clear_height, canvas_height)
+
+# Turn brush strokes into g-code
+for c_index, color in enumerate(colors):  # Iterate over colors in order
+    count = 0  # Reset count for this color
+    alex.color(util.c_to_string(color, reverse=True))  # Change turtle color
+    o += gc.clean_brush(WATERS, well_clear_height, well_radius, dip_height)  # Clean brush for new color
+    o += "G0 Z%s; Go to travel height on Z axis\n" % travel_height  # Make sure head is at safe height
+    # Iterate over brushstrokes array
+    for x in range(width):
+        for y in range(height):
+            if util.c_to_string(color_locations[x,y]) != color:  # If its not the right color, skip it
+                continue
+
+            alex.penup()  # Raise turtle pen
+
+            # See if we need a dip in water or paint (Paint every 30, water every 300)
+            if count % (300) == 0:
+                o += gc.water_dip(WATERS, well_clear_height, well_radius, dip_height)
             if count % 30 == 0:
-                o += gc.well_dip(c_index, WELLS, WELL_CLEAR_HEIGHT, DIP_HEIGHT, WELL_RADIUS)
-                alex.penup()
-                lifts += 1
-                if current_run > longest_run:
-                    longest_run = current_run
-                current_run = 0
-            #a, b = motions[color].pop(0) #util.get_closest((lastX, lastY), motions[color], brush_stroke_length+1)
+                o += gc.well_dip(c_index, WELLS, well_clear_height, dip_height, well_radius)
+
+            # Get this brush stroke
+            a, b = brush_strokes[x][y].xy
             x1, y1 = a
             x2, y2 = b
+
+            # Clip in case any of the strokes try to go outside the painting area
             if y1 > max_x:
                 max_x = y1
             if y2 > max_x:
                 max_x = y2
 
-            # dist = abs(  math.sqrt(  ((float(x1)) - (float(lastX)))**2 + ((float(y1)) - (float(lastY)))**2   )     )
-            # if dist > brush_stroke_length*2 and not count % 40 == 0:
-            #     lifts += 1
-            #     o += "G0 Z%s; Go to travel height on Z axis\n" % TRAVEL_HEIGHT
-            #     alex.penup()
-            #     if current_run > longest_run:
-            #         longest_run = current_run
-            #     current_run = 0
-            current_run += 1
-            o += "G0 X%s Y%s;\n" % (x1*x_ratio_b+ PAPER[0][0],y1*y_ratio_b+ PAPER[0][1])
-            o += "G0 Z%s;\n" % (PAINT_HEIGHT)
-            o += "G0 X%s Y%s;\n" % (x2*x_ratio_b+ PAPER[0][0],y2*y_ratio_b+ PAPER[0][1])
-            alex.goto(x1-400,y1-400)
+            # Move to location, lower pen, move pen, raise pen
+            o += "G0 X%s Y%s;\n" % (x1 * x_ratio_b + origin_offset[0], y1 * y_ratio_b + origin_offset[1])
+            o += "G0 Z%s;\n" % (canvas_height)
+            o += "G0 X%s Y%s;\n" % (x2 * x_ratio_b + origin_offset[0], y2 * y_ratio_b + origin_offset[1])
+            o += "G0 Z%s; Go to travel height on Z axis\n" % travel_height
+
+            # Same with pen
+            alex.goto(x1 - 400, y1 - 400)
             alex.pendown()
-            alex.goto(x2-400,y2-400)
+            alex.goto(x2 - 400, y2 - 400)
+            alex.penup()
+
+            # Increment
             count += 1
-            all_count += 1
-            lastX = x2
-            lastY = y2
-        lifts += 1
-        o += "G0 Z%s; Go to travel height on Z axis\n" % TRAVEL_HEIGHT
-        alex.penup()
-        if current_run > longest_run:
-            longest_run = current_run
-        current_run = 0
 
-    if current_run > longest_run:
-        longest_run = current_run
-    current_run = 0
-
-    print (color, count)
-print (max_x*x_ratio_b+ PAPER[0][0])
-print (all_count, lifts, longest_run)
-
-o += gc.clean_brush(WATERS, WELL_CLEAR_HEIGHT, WELL_RADIUS, DIP_HEIGHT)
-o += "G0 Z%s;\n" % (WELL_CLEAR_HEIGHT + 20)
+# Last brush clean, and move printer head to safe location
+o += gc.clean_brush(WATERS, well_clear_height, well_radius, dip_height)
+o += "G0 Z%s;\n" % (well_clear_height + 20)
 o += "G0 Y%s; Go to Paper/Pallete install location\n" % (200)
 
+# Write out the g-code file
 with open(os.path.join(folder, "%s.gcode" % descriptor), "w+") as f:
     f.write(o)
