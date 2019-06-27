@@ -108,6 +108,9 @@ for x in range(width):
         # Add data to brush strokes
         brush_strokes[-1].append(BrushStroke(color, length, xy))
 
+# Continue to next output line
+print()
+
 # Create and save color palette image
 util.draw_palette(colors).save(os.path.join(folder, "%s-colors.png" % descriptor))
 
