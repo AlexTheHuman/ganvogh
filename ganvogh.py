@@ -25,6 +25,8 @@ args = parser.parse_args()
 # Create output directory for resultant g-code
 descriptor = os.path.basename(args.IMAGE_FILE).split(".")[0]
 folder = os.path.join('output', descriptor)
+if not os.path.isdir('output/'):
+    os.mkdir('output/')
 if not os.path.isdir(folder):
     os.mkdir(folder)
 
