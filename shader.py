@@ -4,6 +4,11 @@ import sys
 import util
 import os
 
+"""
+This file is not complete and is not ready for use!
+It will implement a CMYK version of the algorithm that will only use these 4 colors with dithering.
+"""
+
 do_file = "input/frog.png"
 
 color1 = '#00ffff'
